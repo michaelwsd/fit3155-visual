@@ -67,7 +67,7 @@ export default function StepControls({
         <div className="bg-slate-800 rounded-lg px-3 py-1.5">
           <span className="text-xs text-slate-500">Extension </span>
           <span className="text-sm font-bold text-emerald-400">
-            {step.extension >= 0 ? step.extension : '—'}
+            {step.extension >= 0 ? step.extension + 1 : '—'}
           </span>
         </div>
         <RuleBadge rule={step.rule} />
