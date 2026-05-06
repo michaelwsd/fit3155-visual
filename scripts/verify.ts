@@ -149,8 +149,8 @@ function findStep(steps: StepSnapshot[], phase: number, extension: number, rule:
 
 function remainderFromStep(s: StepSnapshot): string {
   if (s.activeLength <= 0) return '';
-  const start = s.phase - s.activeLength + 1;
-  return s.txt.slice(start, s.phase + 1);
+  const start = s.phase - s.activeLength;
+  return s.txt.slice(start, s.phase);
 }
 
 function verifyPDFExample() {
@@ -188,10 +188,10 @@ function verifyPDFExample() {
     { label: 'P4 E3', phase: 3, extension: 2, expectedRule: 'rule3', afterRem: 'b', afterAN: 'root' },
     // P5 E3: Rule 3, rem='bb' (entering state)
     { label: 'P5 E3', phase: 4, extension: 2, expectedRule: 'rule3', afterRem: 'bb', afterAN: 'root' },
-    // P6 E3: Rule 2 Reg, internal #1, rem after='bc', AN after=r (root adjust)
-    { label: 'P6 E3', phase: 5, extension: 2, expectedRule: 'rule2case2', afterRem: 'bc', afterAN: 'root', newInternalOrd: 1 },
-    // P6 E4: Rule 2 Reg, internal #2, rem after='c', AN after=r, resolved 1→2
-    { label: 'P6 E4', phase: 5, extension: 3, expectedRule: 'rule2case2', afterRem: 'c', afterAN: 'root', newInternalOrd: 2 },
+    // P6 E3: Rule 2 Reg, internal #1, rem after='bb', AN after=r (root adjust)
+    { label: 'P6 E3', phase: 5, extension: 2, expectedRule: 'rule2case2', afterRem: 'bb', afterAN: 'root', newInternalOrd: 1 },
+    // P6 E4: Rule 2 Reg, internal #2, rem after='b', AN after=r, resolved 1→2
+    { label: 'P6 E4', phase: 5, extension: 3, expectedRule: 'rule2case2', afterRem: 'b', afterAN: 'root', newInternalOrd: 2 },
     // P6 E5: Rule 2 Reg, internal #3, rem after='', AN after=r, resolved 2→3
     { label: 'P6 E5', phase: 5, extension: 4, expectedRule: 'rule2case2', afterRem: '', afterAN: 'root', newInternalOrd: 3 },
     // P6 E6: Rule 2 Alt, resolved 3→r, AN after=r
@@ -202,34 +202,34 @@ function verifyPDFExample() {
     { label: 'P8 E7', phase: 7, extension: 6, expectedRule: 'rule3', afterRem: '', afterAN: 3 },
     // P9 E7: Rule 3, AN=2, rem='' (entering state)
     { label: 'P9 E7', phase: 8, extension: 6, expectedRule: 'rule3', afterRem: '', afterAN: 2 },
-    // P10 E7: Rule 3, AN=2, rem='b' (entering state)
-    { label: 'P10 E7', phase: 9, extension: 6, expectedRule: 'rule3', afterRem: 'b', afterAN: 2 },
-    // P11 E7: Rule 2 Reg, internal #4, AN after=3 (link 2→3), rem='bc'
-    { label: 'P11 E7', phase: 10, extension: 6, expectedRule: 'rule2case2', afterRem: 'bc', afterAN: 3, newInternalOrd: 4 },
-    // P11 E8: Rule 2 Reg, internal #5, AN after=r (link 3→r), rem='bc', resolved 4→5
-    { label: 'P11 E8', phase: 10, extension: 7, expectedRule: 'rule2case2', afterRem: 'bc', afterAN: 'root', newInternalOrd: 5 },
-    // P11 E9: Rule 2 Reg, internal #6, AN after=r, rem='c' (remove 1st char), resolved 5→6
-    { label: 'P11 E9', phase: 10, extension: 8, expectedRule: 'rule2case2', afterRem: 'c', afterAN: 'root', newInternalOrd: 6 },
+    // P10 E7: Rule 3, AN=2, rem='c' (entering state)
+    { label: 'P10 E7', phase: 9, extension: 6, expectedRule: 'rule3', afterRem: 'c', afterAN: 2 },
+    // P11 E7: Rule 2 Reg, internal #4, AN after=3 (link 2→3), rem='cb'
+    { label: 'P11 E7', phase: 10, extension: 6, expectedRule: 'rule2case2', afterRem: 'cb', afterAN: 3, newInternalOrd: 4 },
+    // P11 E8: Rule 2 Reg, internal #5, AN after=r (link 3→r), rem='cb', resolved 4→5
+    { label: 'P11 E8', phase: 10, extension: 7, expectedRule: 'rule2case2', afterRem: 'cb', afterAN: 'root', newInternalOrd: 5 },
+    // P11 E9: Rule 2 Reg, internal #6, AN after=r, rem='b' (remove 1st char), resolved 5→6
+    { label: 'P11 E9', phase: 10, extension: 8, expectedRule: 'rule2case2', afterRem: 'b', afterAN: 'root', newInternalOrd: 6 },
     // P11 E10: Rule 3, AN=3 (following skip-count), rem='' (entering state), resolved 6→3
     { label: 'P11 E10', phase: 10, extension: 9, expectedRule: 'rule3', afterRem: '', afterAN: 3 },
-    // P12 E10: Rule 2 Reg, internal #7, AN after=r (link 3→r), rem='a'
-    { label: 'P12 E10', phase: 11, extension: 9, expectedRule: 'rule2case2', afterRem: 'a', afterAN: 'root', newInternalOrd: 7 },
+    // P12 E10: Rule 2 Reg, internal #7, AN after=r (link 3→r), rem='c'
+    { label: 'P12 E10', phase: 11, extension: 9, expectedRule: 'rule2case2', afterRem: 'c', afterAN: 'root', newInternalOrd: 7 },
     // P12 E11: Rule 2 Reg, internal #8, AN after=r, rem='' (remove 1st char), resolved 7→8
     { label: 'P12 E11', phase: 11, extension: 10, expectedRule: 'rule2case2', afterRem: '', afterAN: 'root', newInternalOrd: 8 },
     // P12 E12: Rule 3, rem='' (entering state), AN=r, resolved 8→r
     { label: 'P12 E12', phase: 11, extension: 11, expectedRule: 'rule3', afterRem: '', afterAN: 'root' },
-    // P13 E12: Rule 3, rem='b' (entering state)
-    { label: 'P13 E12', phase: 12, extension: 11, expectedRule: 'rule3', afterRem: 'b', afterAN: 'root' },
-    // P14 E12: Rule 3, rem='bb' (entering state)
-    { label: 'P14 E12', phase: 13, extension: 11, expectedRule: 'rule3', afterRem: 'bb', afterAN: 'root' },
-    // P15 E12: Rule 3, rem='bbb' (entering state)
-    { label: 'P15 E12', phase: 14, extension: 11, expectedRule: 'rule3', afterRem: 'bbb', afterAN: 'root' },
-    // P16 E12: Rule 3, rem='bbbb' (entering state)
-    { label: 'P16 E12', phase: 15, extension: 11, expectedRule: 'rule3', afterRem: 'bbbb', afterAN: 'root' },
-    // P17 E12: Rule 2 Reg, internal #9, AN=r, rem='bbb$' (remove 1st char)
-    { label: 'P17 E12', phase: 16, extension: 11, expectedRule: 'rule2case2', afterRem: 'bbb$', afterAN: 'root', newInternalOrd: 9 },
-    // P17 E13: Rule 2 Reg, internal #10, AN after=2 (link 1→2), rem='$' (from new AN), resolved 9→10
-    { label: 'P17 E13', phase: 16, extension: 12, expectedRule: 'rule2case2', afterRem: '$', afterAN: 2, newInternalOrd: 10 },
+    // P13 E12: Rule 3, rem='a' (entering state)
+    { label: 'P13 E12', phase: 12, extension: 11, expectedRule: 'rule3', afterRem: 'a', afterAN: 'root' },
+    // P14 E12: Rule 3, rem='ab' (entering state)
+    { label: 'P14 E12', phase: 13, extension: 11, expectedRule: 'rule3', afterRem: 'ab', afterAN: 'root' },
+    // P15 E12: Rule 3, rem='abb' (entering state)
+    { label: 'P15 E12', phase: 14, extension: 11, expectedRule: 'rule3', afterRem: 'abb', afterAN: 'root' },
+    // P16 E12: Rule 3, rem='abbb' (entering state)
+    { label: 'P16 E12', phase: 15, extension: 11, expectedRule: 'rule3', afterRem: 'abbb', afterAN: 'root' },
+    // P17 E12: Rule 2 Reg, internal #9, AN=r, rem='bbbb' (remove 1st char)
+    { label: 'P17 E12', phase: 16, extension: 11, expectedRule: 'rule2case2', afterRem: 'bbbb', afterAN: 'root', newInternalOrd: 9 },
+    // P17 E13: Rule 2 Reg, internal #10, AN after=2 (link 1→2), rem='b' (from new AN), resolved 9→10
+    { label: 'P17 E13', phase: 16, extension: 12, expectedRule: 'rule2case2', afterRem: 'b', afterAN: 2, newInternalOrd: 10 },
     // P17 E14: Rule 2 Alt, AN after=2 (link 1→2), rem='', resolved 10→1
     { label: 'P17 E14', phase: 16, extension: 13, expectedRule: 'rule2case1', afterRem: '', afterAN: 2 },
     // P17 E15: Rule 2 Alt, AN=3 (link 2→3), rem=''

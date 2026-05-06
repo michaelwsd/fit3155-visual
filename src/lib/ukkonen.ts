@@ -66,12 +66,12 @@ export function buildSteps(txt: string): StepSnapshot[] {
   let activeLength = 0;
   let lastj = 0;
 
-  // Helper: describe remainder using current suffix indices [phase-len+1, phase]
+  // Helper: describe remainder — the characters implicitly matched in previous phases
   function remStr(phase: number, len: number): string {
     if (len <= 0) return 'none';
-    const start = phase - len + 1;
-    const end = phase;
-    if (start < 0 || end >= txt.length) return 'none';
+    const start = phase - len;
+    const end = phase - 1;
+    if (start < 0 || end < 0 || end >= txt.length) return 'none';
     return `"${txt.slice(start, end + 1)}" [${start}, ${end}]`;
   }
 

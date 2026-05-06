@@ -43,9 +43,9 @@ function computeRemainder(step: StepSnapshot): { start: number; end: number; sub
   if (step.activeLength <= 0) {
     return null;
   }
-  const end = step.phase;
-  const start = step.phase - step.activeLength + 1;
-  if (start < 0 || end >= step.txt.length) return null;
+  const start = step.phase - step.activeLength;
+  const end = step.phase - 1;
+  if (start < 0 || end < 0 || end >= step.txt.length) return null;
   const substr = step.txt.slice(start, end + 1);
   return { start, end, substr };
 }
