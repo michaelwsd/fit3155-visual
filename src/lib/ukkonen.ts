@@ -66,11 +66,13 @@ export function buildSteps(txt: string): StepSnapshot[] {
   let activeLength = 0;
   let lastj = 0;
 
-  // Helper: describe remainder as a string range
-  function remStr(edge: number, len: number): string {
-    if (len <= 0 || edge < 0 || edge >= txt.length) return 'none';
-    const end = Math.min(edge + len - 1, txt.length - 1);
-    return `"${txt.slice(edge, end + 1)}" [${edge}, ${end}]`;
+  // Helper: describe remainder using current suffix indices [phase-len+1, phase]
+  function remStr(phase: number, len: number): string {
+    if (len <= 0) return 'none';
+    const start = phase - len + 1;
+    const end = phase;
+    if (start < 0 || end >= txt.length) return 'none';
+    return `"${txt.slice(start, end + 1)}" [${start}, ${end}]`;
   }
 
   function nodeLabel(id: number): string {
@@ -122,7 +124,7 @@ export function buildSteps(txt: string): StepSnapshot[] {
     snap(i, -1, 'rule1',
       `Phase ${i + 1}: Processing character '${txt[i]}' (index ${i}). ` +
       `Leaf end incremented from ${prevLeafEnd} to ${leafEnd} — all existing leaf edges now include '${txt[i]}'. ` +
-      `Remainder is ${remStr(activeEdge, activeLength)}. ` +
+      `Remainder is ${remStr(i, activeLength)}. ` +
       `Extensions ${0}..${lastj - 1} are handled by Rule 1 (leaf extension). ` +
       `We need to explicitly process extensions ${lastj}..${i}.`
     );
@@ -153,7 +155,7 @@ export function buildSteps(txt: string): StepSnapshot[] {
         const lookupChar = String.fromCharCode(edgeChar);
         snap(i, lastj, 'rule2case1',
           `Extension ${lastj}: Trying to insert suffix "${txt.slice(lastj, i + 1)}" (indices [${lastj}, ${i}]). ` +
-          `Active node is ${nodeLabel(activeNode)}, remainder is ${remStr(activeEdge, activeLength)}. ` +
+          `Active node is ${nodeLabel(activeNode)}, remainder is ${remStr(i, activeLength)}. ` +
           `No outgoing edge starting with '${lookupChar}' from ${nodeLabel(activeNode)}. ` +
           `Created new leaf L${lastj} with edge label starting at index ${i}. ` +
           `Rule 2, Case 1 (Alternate) applied.` +
@@ -179,9 +181,9 @@ export function buildSteps(txt: string): StepSnapshot[] {
           const edgeLabelStr = txt.slice(edgeNode.start, getEnd(edgeNode) + 1);
           snap(i, lastj, 'skipcount',
             `Extension ${lastj}: Walking down the tree (Skip/Count). ` +
-            `Remainder ${remStr(prevAE, prevAL)} is longer than edge "${edgeLabelStr}" (length ${edgeLength}). ` +
+            `Remainder ${remStr(i, prevAL)} is longer than edge "${edgeLabelStr}" (length ${edgeLength}). ` +
             `Moved active node from ${nodeLabel(prevAN)} to ${nodeLabel(activeNode)}. ` +
-            `Remainder updated: ${remStr(prevAE, prevAL)} → ${remStr(activeEdge, activeLength)}. ` +
+            `Remainder updated: ${remStr(i, prevAL)} → ${remStr(i, activeLength)}. ` +
             `Continuing to walk down from the new active node.`
           );
           continue;
@@ -204,7 +206,7 @@ export function buildSteps(txt: string): StepSnapshot[] {
           snap(i, lastj, 'rule3',
             `Extension ${lastj}: Character '${txt[i]}' (index ${i}) already exists on the edge to ${nodeLabel(edgeNodeId)} ` +
             `at position ${edgeNode.start + prevAL}. Showstopper — Rule 3 applied. ` +
-            `Remainder grows: ${remStr(activeEdge, prevAL)} → ${remStr(activeEdge, activeLength)}. ` +
+            `Remainder grows: ${remStr(i, prevAL)} → ${remStr(i, activeLength)}. ` +
             `All remaining extensions ${lastj + 1}..${i} are implicit (already in the tree). ` +
             `Phase ${i + 1} ends here.` +
             (prevLastNewNode !== null ? ` Suffix link set: ${nodeLabel(prevLastNewNode)} → ${nodeLabel(activeNode)}.` : ''),
@@ -244,7 +246,7 @@ export function buildSteps(txt: string): StepSnapshot[] {
 
         snap(i, lastj, 'rule2case2',
           `Extension ${lastj}: Trying to insert suffix "${txt.slice(lastj, i + 1)}" (indices [${lastj}, ${i}]). ` +
-          `Active node is ${nodeLabel(activeNode)}, remainder is ${remStr(activeEdge, activeLength)}. ` +
+          `Active node is ${nodeLabel(activeNode)}, remainder is ${remStr(i, activeLength)}. ` +
           `Character '${txt[i]}' differs from '${txt[edgeNode.start]}' mid-edge. ` +
           `Split edge: "${splitLabel}" becomes internal node N${newInternal.id}, ` +
           `"${remainingLabel}" continues to old node, and new leaf L${lastj} added for '${txt[i]}'. ` +
@@ -269,7 +271,7 @@ export function buildSteps(txt: string): StepSnapshot[] {
 
         snap(i, lastj, 'rootadjust',
           `Active point adjustment at root: Since active node is root, we remove the leading character from the remainder. ` +
-          `Remainder updated: ${remStr(prevAE, prevAL)} → ${remStr(activeEdge, activeLength)}. ` +
+          `Remainder updated: ${remStr(i, prevAL)} → ${remStr(i, activeLength)}. ` +
           `This shifts from suffix "${txt.slice(lastj - 1, i + 1)}" to suffix "${txt.slice(lastj, i + 1)}" for the next extension.`
         );
       } else if (activeNode !== root.id) {
@@ -278,7 +280,7 @@ export function buildSteps(txt: string): StepSnapshot[] {
 
         snap(i, lastj, 'suffixlink',
           `Follow suffix link: Active node moves from ${nodeLabel(prevAN)} to ${nodeLabel(activeNode)}. ` +
-          `Remainder stays ${remStr(activeEdge, activeLength)}. ` +
+          `Remainder stays ${remStr(i, activeLength)}. ` +
           `This positions us to process the next shorter suffix "${txt.slice(lastj, i + 1)}".`
         );
       }

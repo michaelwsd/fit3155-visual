@@ -40,11 +40,12 @@ function Var({
 }
 
 function computeRemainder(step: StepSnapshot): { start: number; end: number; substr: string } | null {
-  if (step.activeLength <= 0 || step.activeEdge < 0 || step.activeEdge >= step.txt.length) {
+  if (step.activeLength <= 0) {
     return null;
   }
-  const start = step.activeEdge;
-  const end = step.activeEdge + step.activeLength - 1;
+  const end = step.phase;
+  const start = step.phase - step.activeLength + 1;
+  if (start < 0 || end >= step.txt.length) return null;
   const substr = step.txt.slice(start, end + 1);
   return { start, end, substr };
 }
