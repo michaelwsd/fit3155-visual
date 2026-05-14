@@ -195,7 +195,7 @@ export function buildSteps(txt: string): StepSnapshot[] {
           snap(i, lastj, 'rule3',
             `Extension ${lastj + 1}: Character '${txt[i]}' (index ${i}) already exists on the edge to ${nodeLabel(edgeNodeId)} ` +
             `at position ${edgeNode.start + activeLength}. Showstopper — Rule 3 applied. ` +
-            `Remainder grows: ${remStr(i, activeLength)} → ${remStr(i, activeLength + 1)}. ` +
+            `Remainder grows: ${remStr(i, activeLength)} → ${remStr(i + 1, activeLength + 1)}. ` +
             `All remaining extensions ${lastj + 2}..${i + 1} are implicit (already in the tree). ` +
             `Phase ${i + 1} ends here.` +
             (prevLastNewNode !== null ? ` Suffix link set: ${nodeLabel(prevLastNewNode)} → ${nodeLabel(activeNode)}.` : ''),
