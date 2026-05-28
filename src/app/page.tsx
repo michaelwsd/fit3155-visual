@@ -6,6 +6,7 @@ import TreeVisualization from '@/components/TreeVisualization';
 import VariablePanel from '@/components/VariablePanel';
 import StringDisplay from '@/components/StringDisplay';
 import StepControls from '@/components/StepControls';
+import { useTheme } from '@/components/ThemeProvider';
 
 export default function Home() {
   const [inputText, setInputText] = useState('abcabc$');
@@ -16,6 +17,7 @@ export default function Home() {
   const [speed, setSpeed] = useState(1200);
   const [loading, setLoading] = useState(true);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { theme, toggle: toggleTheme } = useTheme();
 
   // Fetch steps from server API
   useEffect(() => {
@@ -134,7 +136,7 @@ export default function Home() {
               Ukkonen&apos;s Suffix Tree — Step-by-Step Visualizer
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Arrow keys to navigate, Space to play/pause <span className="text-slate-600 ml-2">by michael wang</span>
+              Arrow keys to navigate, Space to play/pause <span className="text-slate-400 ml-2">Built by Michael Wang</span>
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -152,6 +154,30 @@ export default function Home() {
               className="px-4 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 text-sm font-bold transition-colors"
             >
               Build
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-colors"
+              aria-label="Toggle theme"
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
             </button>
           </div>
         </div>

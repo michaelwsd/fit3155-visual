@@ -3,6 +3,7 @@
 import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { StepSnapshot } from '@/lib/types';
 import { computeLayout } from '@/lib/layout';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface Props {
   step: StepSnapshot;
@@ -11,9 +12,33 @@ interface Props {
 
 const NODE_RADIUS = 18;
 
+const DARK_COLORS = {
+  nodeFill: '#1e293b', nodeStroke: '#475569', nodeText: '#e2e8f0',
+  activeFill: '#78350f', activeStroke: '#fbbf24', activeText: '#fbbf24',
+  newFill: '#064e3b', newStroke: '#4ade80', newText: '#4ade80',
+  lastStroke: '#a78bfa',
+  edge: '#475569', edgeHighlight: '#fbbf24', edgeNew: '#4ade80',
+  labelBg: '#0f172a', labelBorder: '#1e293b',
+  labelText: '#cbd5e1', labelHighlight: '#fbbf24', labelNew: '#4ade80',
+  suffixLink: '#60a5fa',
+};
+
+const LIGHT_COLORS = {
+  nodeFill: '#f1f5f9', nodeStroke: '#94a3b8', nodeText: '#1e293b',
+  activeFill: '#fef3c7', activeStroke: '#d97706', activeText: '#b45309',
+  newFill: '#d1fae5', newStroke: '#059669', newText: '#059669',
+  lastStroke: '#7c3aed',
+  edge: '#94a3b8', edgeHighlight: '#d97706', edgeNew: '#059669',
+  labelBg: '#f8fafc', labelBorder: '#e2e8f0',
+  labelText: '#475569', labelHighlight: '#b45309', labelNew: '#059669',
+  suffixLink: '#3b82f6',
+};
+
 export default function TreeVisualization({ step }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
+  const { theme } = useTheme();
+  const c = theme === 'dark' ? DARK_COLORS : LIGHT_COLORS;
   const [isPanning, setIsPanning] = useState(false);
   const panStart = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
 
@@ -157,7 +182,7 @@ export default function TreeVisualization({ step }: Props) {
               orient="auto"
               markerUnits="userSpaceOnUse"
             >
-              <polygon points="0 0, 10 4, 0 8" fill="#60a5fa" />
+              <polygon points="0 0, 10 4, 0 8" fill={c.suffixLink} />
             </marker>
             <filter id="glow-green">
               <feGaussianBlur stdDeviation="4" result="coloredBlur" />
@@ -192,7 +217,7 @@ export default function TreeVisualization({ step }: Props) {
                   <path
                     key={`sl-${idx}`}
                     d={`M ${sx} ${sy} C ${cx} ${cy - loopR * 1.4} ${cx} ${cy + loopR * 1.4} ${ex} ${ey}`}
-                    stroke="#60a5fa"
+                    stroke={c.suffixLink}
                     strokeWidth={1.5}
                     strokeDasharray="6 4"
                     fill="none"
@@ -259,7 +284,7 @@ export default function TreeVisualization({ step }: Props) {
               const labelX = x1 + (x2 - x1) * t;
               const labelY = y1 + (y2 - y1) * t;
 
-              const labelColor = isHighlighted ? '#fbbf24' : isNew ? '#4ade80' : '#cbd5e1';
+              const labelColor = isHighlighted ? c.labelHighlight : isNew ? c.labelNew : c.labelText;
               const charWidth = 7.5;
               const textWidth = edge.label.length * charWidth + 8;
               const textHeight = 16;
@@ -268,14 +293,14 @@ export default function TreeVisualization({ step }: Props) {
                 <g key={`e-${edge.from}-${edge.to}`}>
                   <line
                     x1={x1} y1={y1} x2={x2} y2={y2}
-                    stroke={isHighlighted ? '#fbbf24' : isNew ? '#4ade80' : '#475569'}
+                    stroke={isHighlighted ? c.edgeHighlight : isNew ? c.edgeNew : c.edge}
                     strokeWidth={isHighlighted ? 2.5 : 1.5}
                     className="transition-all duration-500"
                   />
                   <rect
                     x={labelX - textWidth / 2} y={labelY - textHeight / 2}
                     width={textWidth} height={textHeight} rx={3}
-                    fill="#0f172a" stroke="#1e293b" strokeWidth={0.5}
+                    fill={c.labelBg} stroke={c.labelBorder} strokeWidth={0.5}
                   />
                   <text
                     x={labelX} y={labelY}
@@ -296,25 +321,25 @@ export default function TreeVisualization({ step }: Props) {
               const isNew = newNodeSet.has(node.id);
               const isLastNewNode = node.id === step.lastNewNodeId;
 
-              let fillColor = '#1e293b';
-              let strokeColor = '#475569';
+              let fillColor = c.nodeFill;
+              let strokeColor = c.nodeStroke;
               let strokeWidth = 1.5;
               let filter = '';
 
               if (isNew) {
-                fillColor = '#064e3b';
-                strokeColor = '#4ade80';
+                fillColor = c.newFill;
+                strokeColor = c.newStroke;
                 strokeWidth = 2.5;
                 filter = 'url(#glow-green)';
               }
               if (isActive) {
-                fillColor = '#78350f';
-                strokeColor = '#fbbf24';
+                fillColor = c.activeFill;
+                strokeColor = c.activeStroke;
                 strokeWidth = 2.5;
                 filter = 'url(#glow-amber)';
               }
               if (isLastNewNode && !isNew) {
-                strokeColor = '#a78bfa';
+                strokeColor = c.lastStroke;
                 strokeWidth = 2;
               }
 
@@ -337,7 +362,7 @@ export default function TreeVisualization({ step }: Props) {
                   <text
                     x={node.x} y={node.y + 4}
                     textAnchor="middle"
-                    fill={isActive ? '#fbbf24' : isNew ? '#4ade80' : '#e2e8f0'}
+                    fill={isActive ? c.activeText : isNew ? c.newText : c.nodeText}
                     fontSize={node.isRoot ? 11 : 10}
                     fontFamily="monospace" fontWeight={600}
                   >
@@ -352,7 +377,7 @@ export default function TreeVisualization({ step }: Props) {
               <text
                 x={activeNodeLayoutNode.x}
                 y={activeNodeLayoutNode.y - NODE_RADIUS - 6}
-                textAnchor="middle" fill="#fbbf24"
+                textAnchor="middle" fill={c.activeText}
                 fontSize={10} fontWeight={700} fontFamily="monospace"
               >
                 ACTIVE
