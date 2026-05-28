@@ -5,9 +5,17 @@ import { StepSnapshot } from '@/lib/types';
 import { computeLayout } from '@/lib/layout';
 import { useTheme } from '@/components/ThemeProvider';
 
+interface DfsHighlight {
+  currentNodeId: number;
+  currentEdge: [number, number] | null;
+  trailEdges: Set<string>;
+  trailNodes: Set<number>;
+}
+
 interface Props {
   step: StepSnapshot;
   prevStep: StepSnapshot | null;
+  dfsHighlight?: DfsHighlight | null;
 }
 
 const NODE_RADIUS = 18;
@@ -21,6 +29,9 @@ const DARK_COLORS = {
   labelBg: '#0f172a', labelBorder: '#1e293b',
   labelText: '#cbd5e1', labelHighlight: '#fbbf24', labelNew: '#4ade80',
   suffixLink: '#60a5fa',
+  dfsFill: '#7c2d12', dfsStroke: '#f97316', dfsText: '#fb923c',
+  dfsEdge: '#f97316', dfsTrail: '#f9731650',
+  dfsTrailFill: '#431407', dfsTrailStroke: '#f9731660', dfsTrailText: '#fb923c80',
 };
 
 const LIGHT_COLORS = {
@@ -32,9 +43,12 @@ const LIGHT_COLORS = {
   labelBg: '#f8fafc', labelBorder: '#e2e8f0',
   labelText: '#475569', labelHighlight: '#b45309', labelNew: '#059669',
   suffixLink: '#3b82f6',
+  dfsFill: '#fff7ed', dfsStroke: '#ea580c', dfsText: '#c2410c',
+  dfsEdge: '#ea580c', dfsTrail: '#ea580c50',
+  dfsTrailFill: '#ffedd5', dfsTrailStroke: '#ea580c60', dfsTrailText: '#c2410c80',
 };
 
-export default function TreeVisualization({ step }: Props) {
+export default function TreeVisualization({ step, dfsHighlight }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
   const { theme } = useTheme();
@@ -274,6 +288,9 @@ export default function TreeVisualization({ step }: Props) {
                 step.highlightEdge[1] === edge.to;
               const isNew =
                 newNodeSet.has(edge.to) || newNodeSet.has(edge.from);
+              const edgeKey = `${edge.from}-${edge.to}`;
+              const isDfsCurrent = dfsHighlight?.currentEdge && `${dfsHighlight.currentEdge[0]}-${dfsHighlight.currentEdge[1]}` === edgeKey;
+              const isDfsTrail = dfsHighlight?.trailEdges.has(edgeKey);
 
               const x1 = edge.fromX;
               const y1 = edge.fromY + NODE_RADIUS;
@@ -284,7 +301,8 @@ export default function TreeVisualization({ step }: Props) {
               const labelX = x1 + (x2 - x1) * t;
               const labelY = y1 + (y2 - y1) * t;
 
-              const labelColor = isHighlighted ? c.labelHighlight : isNew ? c.labelNew : c.labelText;
+              const labelColor = isDfsCurrent ? c.dfsText : isDfsTrail ? c.dfsTrailText
+                : isHighlighted ? c.labelHighlight : isNew ? c.labelNew : c.labelText;
               const charWidth = 7.5;
               const textWidth = edge.label.length * charWidth + 8;
               const textHeight = 16;
@@ -293,8 +311,8 @@ export default function TreeVisualization({ step }: Props) {
                 <g key={`e-${edge.from}-${edge.to}`}>
                   <line
                     x1={x1} y1={y1} x2={x2} y2={y2}
-                    stroke={isHighlighted ? c.edgeHighlight : isNew ? c.edgeNew : c.edge}
-                    strokeWidth={isHighlighted ? 2.5 : 1.5}
+                    stroke={isDfsCurrent ? c.dfsEdge : isDfsTrail ? c.dfsTrail : isHighlighted ? c.edgeHighlight : isNew ? c.edgeNew : c.edge}
+                    strokeWidth={isDfsCurrent ? 3 : isDfsTrail ? 2 : isHighlighted ? 2.5 : 1.5}
                     className="transition-all duration-500"
                   />
                   <rect
@@ -320,19 +338,31 @@ export default function TreeVisualization({ step }: Props) {
               const isActive = node.id === step.activeNodeId;
               const isNew = newNodeSet.has(node.id);
               const isLastNewNode = node.id === step.lastNewNodeId;
+              const isDfsCurrent = dfsHighlight?.currentNodeId === node.id;
+              const isDfsVisited = dfsHighlight?.trailNodes.has(node.id);
 
               let fillColor = c.nodeFill;
               let strokeColor = c.nodeStroke;
               let strokeWidth = 1.5;
               let filter = '';
 
+              if (isDfsVisited && !isDfsCurrent) {
+                fillColor = c.dfsTrailFill;
+                strokeColor = c.dfsTrailStroke;
+                strokeWidth = 2;
+              }
+              if (isDfsCurrent) {
+                fillColor = c.dfsFill;
+                strokeColor = c.dfsStroke;
+                strokeWidth = 3;
+              }
               if (isNew) {
                 fillColor = c.newFill;
                 strokeColor = c.newStroke;
                 strokeWidth = 2.5;
                 filter = 'url(#glow-green)';
               }
-              if (isActive) {
+              if (isActive && !isDfsCurrent) {
                 fillColor = c.activeFill;
                 strokeColor = c.activeStroke;
                 strokeWidth = 2.5;
@@ -362,7 +392,7 @@ export default function TreeVisualization({ step }: Props) {
                   <text
                     x={node.x} y={node.y + 4}
                     textAnchor="middle"
-                    fill={isActive ? c.activeText : isNew ? c.newText : c.nodeText}
+                    fill={isDfsCurrent ? c.dfsText : isActive ? c.activeText : isNew ? c.newText : c.nodeText}
                     fontSize={node.isRoot ? 11 : 10}
                     fontFamily="monospace" fontWeight={600}
                   >

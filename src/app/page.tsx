@@ -1,12 +1,58 @@
 'use client';
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { StepSnapshot } from '@/lib/types';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { StepSnapshot, TreeNode } from '@/lib/types';
 import TreeVisualization from '@/components/TreeVisualization';
 import VariablePanel from '@/components/VariablePanel';
 import StringDisplay from '@/components/StringDisplay';
 import StepControls from '@/components/StepControls';
 import { useTheme } from '@/components/ThemeProvider';
+
+interface DfsFrame {
+  currentNodeId: number;
+  currentEdge: [number, number] | null;
+  trailEdges: [number, number][];
+  suffixArray: number[];
+}
+
+function computeDfsFrames(nodes: TreeNode[], txt: string, leafEnd: number): DfsFrame[] {
+  const nodeById = new Map<number, TreeNode>();
+  for (const n of nodes) nodeById.set(n.id, n);
+  const getEnd = (n: TreeNode) => (n.end === 'leaf' ? leafEnd : n.end);
+
+  const frames: DfsFrame[] = [];
+  const trailEdges: [number, number][] = [];
+  const suffixArray: number[] = [];
+
+  function dfs(nodeId: number, fromEdge: [number, number] | null) {
+    const node = nodeById.get(nodeId)!;
+    if (node.isLeaf) suffixArray.push(node.suffixIndex);
+
+    frames.push({
+      currentNodeId: nodeId,
+      currentEdge: fromEdge,
+      trailEdges: [...trailEdges],
+      suffixArray: [...suffixArray],
+    });
+
+    if (fromEdge) trailEdges.push(fromEdge);
+
+    const children = (node.children.filter((c) => c !== null) as number[]).sort((a, b) => {
+      const ac = nodeById.get(a)!;
+      const bc = nodeById.get(b)!;
+      const aLabel = txt.slice(ac.start, getEnd(ac) + 1);
+      const bLabel = txt.slice(bc.start, getEnd(bc) + 1);
+      return aLabel < bLabel ? -1 : aLabel > bLabel ? 1 : 0;
+    });
+
+    for (const childId of children) {
+      dfs(childId, [nodeId, childId]);
+    }
+  }
+
+  dfs(0, null);
+  return frames;
+}
 
 export default function Home() {
   const [inputText, setInputText] = useState('abcabc$');
@@ -14,10 +60,15 @@ export default function Home() {
   const [steps, setSteps] = useState<StepSnapshot[]>([]);
   const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(1200);
+  const [speed, setSpeed] = useState(1000);
   const [loading, setLoading] = useState(true);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { theme, toggle: toggleTheme } = useTheme();
+
+  const [dfsFrames, setDfsFrames] = useState<DfsFrame[]>([]);
+  const [dfsIndex, setDfsIndex] = useState(-1);
+  const [isDfsPlaying, setIsDfsPlaying] = useState(false);
+  const dfsTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Fetch steps from server API
   useEffect(() => {
@@ -89,6 +140,62 @@ export default function Home() {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [isPlaying, speed, nextStep]);
+
+  // DFS autoplay
+  useEffect(() => {
+    if (dfsTimerRef.current) clearInterval(dfsTimerRef.current);
+    if (isDfsPlaying && dfsFrames.length > 0) {
+      dfsTimerRef.current = setInterval(() => {
+        setDfsIndex((prev) => {
+          if (prev >= dfsFrames.length - 1) {
+            setIsDfsPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, speed);
+    }
+    return () => { if (dfsTimerRef.current) clearInterval(dfsTimerRef.current); };
+  }, [isDfsPlaying, speed, dfsFrames.length]);
+
+  // Clear DFS when step changes
+  useEffect(() => {
+    setDfsFrames([]);
+    setDfsIndex(-1);
+    setIsDfsPlaying(false);
+  }, [stepIndex]);
+
+  const startDfs = useCallback(() => {
+    if (!step) return;
+    const frames = computeDfsFrames(step.nodes, step.txt, step.leafEnd);
+    setDfsFrames(frames);
+    setDfsIndex(0);
+    setIsDfsPlaying(true);
+  }, [step]);
+
+  const dfsFrame = dfsIndex >= 0 && dfsIndex < dfsFrames.length ? dfsFrames[dfsIndex] : null;
+
+  const dfsHighlight = useMemo(() => {
+    if (!dfsFrame) return null;
+    const trailEdgeSet = new Set<string>();
+    const trailNodeSet = new Set<number>();
+    trailNodeSet.add(0);
+    for (const [from, to] of dfsFrame.trailEdges) {
+      trailEdgeSet.add(`${from}-${to}`);
+      trailNodeSet.add(from);
+      trailNodeSet.add(to);
+    }
+    if (dfsFrame.currentEdge) {
+      trailEdgeSet.add(`${dfsFrame.currentEdge[0]}-${dfsFrame.currentEdge[1]}`);
+    }
+    trailNodeSet.add(dfsFrame.currentNodeId);
+    return {
+      currentNodeId: dfsFrame.currentNodeId,
+      currentEdge: dfsFrame.currentEdge,
+      trailEdges: trailEdgeSet,
+      trailNodes: trailNodeSet,
+    };
+  }, [dfsFrame]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -194,7 +301,7 @@ export default function Home() {
 
           {/* Tree */}
           <div className="flex-1 min-h-75">
-            <TreeVisualization step={step} prevStep={prevStep} />
+            <TreeVisualization step={step} prevStep={prevStep} dfsHighlight={dfsHighlight} />
           </div>
 
           {/* Controls */}
@@ -260,7 +367,96 @@ export default function Home() {
                   <span className="w-8 h-0.5 border-t-2 border-dashed border-blue-400" />
                   <span className="text-slate-400">Suffix Link</span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-orange-500/40 ring-1 ring-orange-500" />
+                  <span className="text-slate-400">DFS Traversal</span>
+                </div>
               </div>
+            </div>
+
+            {/* Suffix Array */}
+            <div>
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                Suffix Array
+              </h3>
+              {dfsFrames.length === 0 ? (
+                <button
+                  onClick={startDfs}
+                  className="px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-300 hover:bg-orange-500/30 text-xs font-bold transition-colors"
+                >
+                  Generate via DFS
+                </button>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => {
+                        if (dfsIndex >= dfsFrames.length - 1) {
+                          setDfsIndex(0);
+                          setIsDfsPlaying(true);
+                        } else {
+                          setIsDfsPlaying((p) => !p);
+                        }
+                      }}
+                      className={`px-2.5 py-1 rounded text-xs font-bold transition-colors ${
+                        isDfsPlaying
+                          ? 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30'
+                          : 'bg-orange-500/20 text-orange-300 hover:bg-orange-500/30'
+                      }`}
+                    >
+                      {isDfsPlaying ? 'Pause' : dfsIndex >= dfsFrames.length - 1 ? 'Replay' : 'Play'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsDfsPlaying(false);
+                        setDfsIndex((i) => Math.min(i + 1, dfsFrames.length - 1));
+                      }}
+                      disabled={dfsIndex >= dfsFrames.length - 1}
+                      className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs font-medium transition-colors"
+                    >
+                      Step
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDfsFrames([]);
+                        setDfsIndex(-1);
+                        setIsDfsPlaying(false);
+                      }}
+                      className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
+                    >
+                      Clear
+                    </button>
+                    <span className="text-xs text-slate-500">
+                      {dfsIndex + 1} / {dfsFrames.length}
+                    </span>
+                  </div>
+                  {dfsFrame && (
+                    <div className="flex flex-wrap gap-1">
+                      {dfsFrame.suffixArray.map((si, i) => {
+                        const isLatest = i === dfsFrame.suffixArray.length - 1 &&
+                          (dfsIndex === 0 || dfsFrame.suffixArray.length !== dfsFrames[dfsIndex - 1]?.suffixArray.length);
+                        return (
+                          <span
+                            key={i}
+                            className={`inline-flex items-center justify-center w-7 h-7 rounded text-xs font-mono font-bold transition-all duration-300 ${
+                              isLatest
+                                ? 'bg-orange-500/30 text-orange-300 ring-1 ring-orange-500/50 scale-110'
+                                : 'bg-slate-800 text-slate-300'
+                            }`}
+                          >
+                            {si}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {dfsIndex >= dfsFrames.length - 1 && dfsFrame && (
+                    <p className="text-xs text-orange-300 font-semibold">
+                      SA = [{dfsFrame.suffixArray.join(', ')}]
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -129,20 +129,25 @@ export default function StepControls({
 
       {/* Speed + progress */}
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span className="text-xs text-slate-500">Speed</span>
-          <input
-            type="range"
-            min={200}
-            max={3000}
-            step={100}
-            value={speed}
-            onChange={(e) => onSpeedChange(Number(e.target.value))}
-            className="w-24 accent-amber-500"
-          />
-          <span className="text-xs text-slate-400 font-mono w-12">
-            {(speed / 1000).toFixed(1)}s
-          </span>
+          {([
+            { label: 'Slow', ms: 2000 },
+            { label: 'Normal', ms: 1000 },
+            { label: 'Fast', ms: 400 },
+          ] as const).map((preset) => (
+            <button
+              key={preset.label}
+              onClick={() => onSpeedChange(preset.ms)}
+              className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${
+                speed === preset.ms
+                  ? 'bg-amber-500/25 text-amber-300 ring-1 ring-amber-500/40'
+                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-300'
+              }`}
+            >
+              {preset.label}
+            </button>
+          ))}
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
