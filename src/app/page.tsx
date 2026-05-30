@@ -300,7 +300,7 @@ export default function Home() {
           </div>
 
           {/* Tree */}
-          <div className="flex-1 min-h-75">
+          <div className="flex-1 min-h-75 relative">
             <TreeVisualization step={step} prevStep={prevStep} dfsHighlight={dfsHighlight} />
           </div>
 

@@ -81,8 +81,15 @@ export default function TreeVisualization({ step, dfsHighlight }: Props) {
     });
   }, [layout]);
 
-  // Auto-fit on layout change
-  useEffect(() => { fitToView(); }, [fitToView]);
+  // Auto-fit on layout change and when container resizes
+  useEffect(() => {
+    fitToView();
+    const container = containerRef.current;
+    if (!container) return;
+    const observer = new ResizeObserver(() => fitToView());
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [fitToView]);
 
   // Mouse pan
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -173,7 +180,7 @@ export default function TreeVisualization({ step, dfsHighlight }: Props) {
   );
 
   return (
-    <div className="relative w-full h-full">
+    <div className="absolute inset-0">
       <div
         ref={containerRef}
         className="w-full h-full bg-slate-950 rounded-xl overflow-hidden cursor-grab active:cursor-grabbing select-none touch-none"

@@ -172,7 +172,7 @@ export function computeLayout(
   const allY = layoutNodes.map((n) => n.y);
   const PADDING = 60;
   const width = Math.max(...allX) - Math.min(...allX) + PADDING * 2;
-  const height = Math.max(...allY) + NODE_V_GAP;
+  const height = Math.max(...allY) + 40;
 
   const minX = Math.min(...allX);
   for (const n of layoutNodes) n.x -= minX - PADDING;
