@@ -382,7 +382,7 @@ export default function Home() {
               {dfsFrames.length === 0 ? (
                 <button
                   onClick={startDfs}
-                  className="px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-300 hover:bg-orange-500/30 text-xs font-bold transition-colors"
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-300 border border-orange-500/30 text-xs font-bold transition-all duration-200 hover:from-orange-500/30 hover:to-amber-500/30 hover:border-orange-500/50 hover:shadow-[0_0_12px_rgba(249,115,22,0.15)] hover:scale-[1.03] active:scale-[0.97]"
                 >
                   Generate via DFS
                 </button>
