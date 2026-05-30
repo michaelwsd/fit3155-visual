@@ -84,7 +84,7 @@ export default function Home() {
         if (!cancelled) {
           setSteps(data.steps);
           setStepIndex(0);
-          setLoading(false);
+          setTimeout(() => { if (!cancelled) setLoading(false); }, 800);
         }
       })
       .catch(() => {
@@ -225,8 +225,28 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <p className="text-slate-400 text-sm">Building suffix tree...</p>
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-6">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" className="animate-spin-slow">
+          <circle cx="24" cy="24" r="20" stroke="#334155" strokeWidth="3" />
+          <path
+            d="M24 4a20 20 0 0 1 20 20"
+            stroke="url(#loading-grad)" strokeWidth="3" strokeLinecap="round"
+          />
+          <defs>
+            <linearGradient id="loading-grad" x1="24" y1="4" x2="44" y2="24">
+              <stop stopColor="#f59e0b" />
+              <stop offset="1" stopColor="#f97316" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-slate-300 text-sm font-medium">Building suffix tree</p>
+          <div className="flex gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 animate-bounce [animation-delay:0ms]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 animate-bounce [animation-delay:150ms]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 animate-bounce [animation-delay:300ms]" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -382,7 +402,7 @@ export default function Home() {
               {dfsFrames.length === 0 ? (
                 <button
                   onClick={startDfs}
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-300 border border-orange-500/30 text-xs font-bold transition-all duration-200 hover:from-orange-500/30 hover:to-amber-500/30 hover:border-orange-500/50 hover:shadow-[0_0_12px_rgba(249,115,22,0.15)] hover:scale-[1.03] active:scale-[0.97]"
+                  className="px-4 py-2 rounded-lg bg-linear-to-r from-orange-500/20 to-amber-500/20 text-orange-300 border border-orange-500/30 text-xs font-bold transition-all duration-200 hover:from-orange-500/30 hover:to-amber-500/30 hover:border-orange-500/50 hover:shadow-[0_0_12px_rgba(249,115,22,0.15)] hover:scale-[1.03] active:scale-[0.97]"
                 >
                   Generate via DFS
                 </button>

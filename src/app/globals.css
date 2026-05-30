@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --animate-spin-slow: spin 1s linear infinite;
+}
+
 @layer base {
   :root {
     --background: #020617;
