@@ -9,7 +9,7 @@ An interactive web-based visualizer for Ukkonen's online suffix tree constructio
 ## Features
 
 - **Step-by-step execution** — walk through every phase and extension of the algorithm
-- **Tree visualization** — SVG-based suffix tree rendering with pan (drag) and zoom (scroll), auto-fits to viewport
+- **Tree visualization** — SVG-based suffix tree rendering with pan (drag) and zoom (scroll/pinch), auto-fits to viewport on desktop and mobile
 - **Variable state panel** — live display of active node, active edge, active length, last j, leaf end, and last new internal node, with change highlighting
 - **Rule annotations** — color-coded badges showing which rule is applied at each step:
   - Rule 1 — Global leaf extension
@@ -18,8 +18,10 @@ An interactive web-based visualizer for Ukkonen's online suffix tree constructio
   - Rule 3 — Showstopper (implicit extension)
   - Skip/Count — Walking down the tree
 - **Suffix links** — displayed as dashed blue arcs with directional arrowheads, including root's self-link
+- **DFS traversal & suffix array** — animate a depth-first traversal of the completed tree and watch the suffix array build up in real time
+- **Dark / light theme** — toggle between dark and light mode, persisted in localStorage
 - **Plain-English explanations** — each step includes a description of what happened and why
-- **Autoplay** — play through the algorithm with adjustable speed
+- **Autoplay** — play through the algorithm with adjustable speed (slow / normal / fast)
 - **Custom input** — enter any string up to 20 characters
 - **Keyboard shortcuts**:
   - `Arrow Left` / `h` — previous step
@@ -44,23 +46,26 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 visualizer/
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx          # Main page — input, controls, layout
-│   │   ├── layout.tsx        # Root layout
-│   │   └── globals.css       # Global styles
+│   │   ├── page.tsx              # Main page — input, controls, layout
+│   │   ├── layout.tsx            # Root layout with theme init
+│   │   ├── globals.css           # Global styles and custom animations
+│   │   └── api/build-steps/
+│   │       └── route.ts          # Server API — builds suffix tree steps
 │   ├── components/
 │   │   ├── TreeVisualization.tsx  # SVG tree rendering with pan/zoom
 │   │   ├── VariablePanel.tsx      # Algorithm state display
 │   │   ├── StringDisplay.tsx      # Input string with phase/suffix highlighting
-│   │   └── StepControls.tsx       # Navigation, playback, rule badges
+│   │   ├── StepControls.tsx       # Navigation, playback, rule badges
+│   │   └── ThemeProvider.tsx      # Dark/light theme context
 │   └── lib/
-│       └── ukkonen.ts        # Algorithm engine + tree layout computation
-├── ukkonen.py                # Original Python implementation
-└── ukkonen_debug.py          # Python debug version with verbose output
+│       ├── ukkonen.ts            # Algorithm engine + step snapshot capture
+│       ├── layout.ts             # Tree layout computation
+│       └── types.ts              # Shared TypeScript types
 ```
 
 ## How It Works
 
-The TypeScript implementation in `src/lib/ukkonen.ts` is a direct port of the Python algorithm in `ukkonen.py`. It is instrumented to capture a snapshot of the full tree state at every step — after each Rule 1 application and after every explicit extension (Rule 2 Case 1, Rule 2 Case 2, Rule 3, and skip/count). Each snapshot records:
+The TypeScript implementation in `src/lib/ukkonen.ts` is instrumented to capture a snapshot of the full tree state at every step — after each Rule 1 application and after every explicit extension (Rule 2 Case 1, Rule 2 Case 2, Rule 3, and skip/count). Each snapshot records:
 
 - The complete node/edge structure of the tree at that moment
 - Active point (node, edge, length)
