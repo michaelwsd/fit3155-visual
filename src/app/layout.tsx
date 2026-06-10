@@ -40,9 +40,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <AlgorithmNav />
-          <ScreenGate>
-            {children}
-          </ScreenGate>
+          {children}
         </ThemeProvider>
       </body>
     </html>
