@@ -7,7 +7,7 @@ export default function BWTPage() {
   const { theme, toggle: toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col">
+    <div className="h-screen bg-slate-950 text-slate-200 flex flex-col overflow-hidden">
       <header className="border-b border-slate-800 px-6 py-4">
         <div className="max-w-400 mx-auto flex items-center justify-between">
           <div className="ml-12">
