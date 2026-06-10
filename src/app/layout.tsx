@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import AlgorithmNav from "@/components/AlgorithmNav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ukkonen's Suffix Tree Visualizer",
-  description: "Interactive step-by-step visualization of Ukkonen's suffix tree construction algorithm",
+  title: "Algorithm Visualizer",
+  description: "Interactive step-by-step visualization of string algorithms",
 };
 
 const themeScript = `try{if(localStorage.getItem('theme')!=='light')document.documentElement.classList.add('dark')}catch(e){}`;
@@ -36,7 +37,10 @@ export default function RootLayout({
         <Script id="theme-init" strategy="beforeInteractive">{themeScript}</Script>
       </head>
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AlgorithmNav />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
