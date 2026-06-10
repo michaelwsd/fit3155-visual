@@ -1,20 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#0f172a"/>
-  <!-- edges -->
-  <line x1="16" y1="8" x2="6" y2="20" stroke="#475569" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="16" y1="8" x2="16" y2="20" stroke="#475569" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="16" y1="8" x2="26" y2="20" stroke="#475569" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="6" y1="20" x2="3" y2="28" stroke="#475569" stroke-width="1.4" stroke-linecap="round"/>
-  <line x1="6" y1="20" x2="10" y2="28" stroke="#475569" stroke-width="1.4" stroke-linecap="round"/>
-  <line x1="26" y1="20" x2="23" y2="28" stroke="#475569" stroke-width="1.4" stroke-linecap="round"/>
-  <!-- root node -->
-  <rect x="12.5" y="4.5" width="7" height="7" rx="1.5" fill="#78350f" stroke="#fbbf24" stroke-width="1.2"/>
-  <!-- internal nodes -->
-  <circle cx="6" cy="20" r="3" fill="#1e293b" stroke="#a78bfa" stroke-width="1.2"/>
-  <circle cx="16" cy="20" r="3" fill="#1e293b" stroke="#4ade80" stroke-width="1.2"/>
-  <circle cx="26" cy="20" r="3" fill="#1e293b" stroke="#475569" stroke-width="1.2"/>
-  <!-- leaf nodes -->
-  <circle cx="3" cy="28" r="2" fill="#064e3b" stroke="#4ade80" stroke-width="0.8"/>
-  <circle cx="10" cy="28" r="2" fill="#064e3b" stroke="#4ade80" stroke-width="0.8"/>
-  <circle cx="23" cy="28" r="2" fill="#1e293b" stroke="#475569" stroke-width="0.8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#0a0a0a"/>
+  <g filter="url(#glow)">
+    <!-- Left chevron < -->
+    <polyline points="48,38 24,64 48,90" fill="none" stroke="url(#g1)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Right chevron > -->
+    <polyline points="80,38 104,64 80,90" fill="none" stroke="url(#g1)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Center pipes | | -->
+    <line x1="58" y1="34" x2="58" y2="94" stroke="url(#g1)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="70" y1="34" x2="70" y2="94" stroke="url(#g1)" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <!-- Sparkle accents -->
+  <circle cx="18" cy="28" r="2.5" fill="#34d399" opacity="0.7"/>
+  <circle cx="110" cy="96" r="2" fill="#3b82f6" opacity="0.6"/>
+  <line x1="96" y1="30" x2="100" y2="30" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="98" y1="28" x2="98" y2="32" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
 </svg>
