@@ -5,6 +5,17 @@ import { usePathname, useRouter } from 'next/navigation';
 
 const ALGORITHMS = [
   {
+    id: 'home',
+    name: 'Home',
+    path: '/',
+    accentClasses: {
+      dot: 'bg-slate-400',
+      activeBg: 'bg-slate-500/15',
+      activeText: 'text-slate-300',
+      activeRing: 'ring-slate-500/30',
+    },
+  },
+  {
     id: 'z-algorithm',
     name: 'Z Algorithm',
     path: '/z-algorithm',
@@ -40,7 +51,7 @@ const ALGORITHMS = [
   {
     id: 'ukkonen',
     name: "Ukkonen's Suffix Tree",
-    path: '/',
+    path: '/ukkonen',
     accentClasses: {
       dot: 'bg-amber-400',
       activeBg: 'bg-amber-500/15',
@@ -73,6 +84,8 @@ export default function AlgorithmNav() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, []);
+
+  if (pathname === '/') return null;
 
   return (
     <div ref={ref} className="fixed top-4 left-4 z-50">
@@ -124,9 +137,7 @@ export default function AlgorithmNav() {
       >
         <div className="p-1.5">
           {ALGORITHMS.map((algo, i) => {
-            const isActive =
-              algo.path === pathname ||
-              (algo.path === '/' && pathname === '/');
+            const isActive = algo.path === pathname;
             return (
               <button
                 key={algo.id}
