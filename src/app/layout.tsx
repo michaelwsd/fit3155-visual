@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import AlgorithmNav from "@/components/AlgorithmNav";
+import ScreenGate from "@/components/ScreenGate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,7 +40,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <AlgorithmNav />
-          {children}
+          <ScreenGate>
+            {children}
+          </ScreenGate>
         </ThemeProvider>
       </body>
     </html>
