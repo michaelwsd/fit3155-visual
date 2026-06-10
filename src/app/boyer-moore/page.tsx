@@ -152,7 +152,7 @@ export default function BoyerMoorePage() {
   if (!step) return null;
 
   return (
-    <div className="h-screen bg-slate-950 text-slate-200 flex flex-col overflow-hidden">
+    <div className="min-h-screen lg:h-screen bg-slate-950 text-slate-200 flex flex-col overflow-x-hidden overflow-y-auto lg:overflow-hidden">
       {/* Header */}
       <header className="border-b border-slate-800 px-6 py-4">
         <div className="max-w-400 mx-auto flex items-center justify-between gap-4 flex-wrap">
@@ -215,7 +215,7 @@ export default function BoyerMoorePage() {
       </header>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
         {/* Left: Visualization + controls */}
         <div className="flex-1 flex flex-col min-w-0">
           <div className="flex-1 min-h-75 relative">
