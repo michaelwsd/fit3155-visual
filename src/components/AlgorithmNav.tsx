@@ -88,7 +88,7 @@ export default function AlgorithmNav() {
   if (pathname === '/') return null;
 
   return (
-    <div ref={ref} className="fixed top-4 left-4 z-50">
+    <div ref={ref} className="hidden md:block fixed top-4 left-4 z-50">
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen((o) => !o)}
