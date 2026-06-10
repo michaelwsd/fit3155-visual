@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Algorithm Visualizer",
+  title: "FIT3155 - Algorithms Visualizer",
   description: "Interactive step-by-step visualization of string algorithms",
 };
 
