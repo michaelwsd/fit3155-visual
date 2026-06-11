@@ -62,7 +62,7 @@ const ALGORITHMS = [
     },
   },
   {
-    name: 'LP — Simplex Method',
+    name: 'Linear Programming',
     path: '/simplex',
     accent: {
       border: 'border-cyan-500/30',
