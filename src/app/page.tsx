@@ -61,6 +61,20 @@ const ALGORITHMS = [
       arrow: 'text-amber-400',
     },
   },
+  {
+    name: 'Hungarian Algorithm',
+    path: '/hungarian',
+    accent: {
+      border: 'border-rose-500/30',
+      hoverBorder: 'hover:border-rose-400/60',
+      bg: 'bg-rose-500/5',
+      hoverBg: 'hover:bg-rose-500/10',
+      dot: 'bg-rose-400',
+      glow: 'hover:shadow-rose-500/10',
+      title: 'text-rose-300',
+      arrow: 'text-rose-400',
+    },
+  },
 ];
 
 export default function HomePage() {

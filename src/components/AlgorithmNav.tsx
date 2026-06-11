@@ -59,6 +59,17 @@ const ALGORITHMS = [
       activeRing: 'ring-amber-500/30',
     },
   },
+  {
+    id: 'hungarian',
+    name: 'Hungarian Algorithm',
+    path: '/hungarian',
+    accentClasses: {
+      dot: 'bg-rose-400',
+      activeBg: 'bg-rose-500/15',
+      activeText: 'text-rose-300',
+      activeRing: 'ring-rose-500/30',
+    },
+  },
 ];
 
 export default function AlgorithmNav() {
