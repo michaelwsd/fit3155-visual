@@ -247,6 +247,7 @@ export function buildHungarianSteps(costMatrix: number[][]): HungarianStep[] {
       if (!assignedRows.has(i)) markedRows[i] = true;
     }
 
+    const unassignedRowList = markedRows.map((m: boolean, i: number) => m ? (i + 1) : null).filter(Boolean).join(', ');
     snap('mark', {
       assignments: assignments.map(a => [...a] as [number, number]),
       cellStatus: cellStatus.map(r => [...r] as CellStatus[]),
@@ -255,7 +256,8 @@ export function buildHungarianSteps(costMatrix: number[][]): HungarianStep[] {
       matchingSize,
       iteration,
       explanation:
-        `Step 3.3: Mark unassigned rows: ${markedRows.map((m: boolean, i: number) => m ? (i + 1) : null).filter(Boolean).join(', ')}.`,
+        `Step 3.3: Mark unassigned rows: {${unassignedRowList}}. ` +
+        `In the flow network, these rows are directly reachable from source S (no matching edge saturates the S → R capacity).`,
     });
 
     let markChanged = true;
@@ -281,6 +283,8 @@ export function buildHungarianSteps(costMatrix: number[][]): HungarianStep[] {
       }
     }
 
+    const markedRowList = markedRows.map((m: boolean, i: number) => m ? (i + 1) : null).filter(Boolean).join(', ') || 'none';
+    const markedColList = markedCols.map((m: boolean, j: number) => m ? (j + 1) : null).filter(Boolean).join(', ') || 'none';
     snap('mark', {
       assignments: assignments.map(a => [...a] as [number, number]),
       cellStatus: cellStatus.map(r => [...r] as CellStatus[]),
@@ -289,14 +293,17 @@ export function buildHungarianSteps(costMatrix: number[][]): HungarianStep[] {
       matchingSize,
       iteration,
       explanation:
-        `Propagate marks. Marked rows: ${markedRows.map((m: boolean, i: number) => m ? (i + 1) : null).filter(Boolean).join(', ') || 'none'}. ` +
-        `Marked columns: ${markedCols.map((m: boolean, j: number) => m ? (j + 1) : null).filter(Boolean).join(', ') || 'none'}.`,
+        `Propagate along alternating paths in the residual graph. ` +
+        `From marked rows, follow non-matching zero edges to mark columns; from marked columns, follow matching edges backwards to mark rows. ` +
+        `Marked rows: {${markedRowList}}. Marked columns: {${markedColList}}.`,
     });
 
     const coveredRows = markedRows.map((m: boolean) => !m);
     const coveredCols = [...markedCols];
     const coverCount = coveredRows.filter(Boolean).length + coveredCols.filter(Boolean).length;
 
+    const covRowList = coveredRows.map((c: boolean, i: number) => c ? (i + 1) : null).filter(Boolean).join(', ');
+    const covColList = coveredCols.map((c: boolean, j: number) => c ? (j + 1) : null).filter(Boolean).join(', ');
     snap('cover', {
       assignments: assignments.map(a => [...a] as [number, number]),
       cellStatus: cellStatus.map(r => [...r] as CellStatus[]),
@@ -307,9 +314,9 @@ export function buildHungarianSteps(costMatrix: number[][]): HungarianStep[] {
       matchingSize,
       iteration,
       explanation:
-        `Cover unmarked rows {${coveredRows.map((c: boolean, i: number) => c ? (i + 1) : null).filter(Boolean).join(', ')}} ` +
-        `and marked columns {${coveredCols.map((c: boolean, j: number) => c ? (j + 1) : null).filter(Boolean).join(', ')}}. ` +
-        `Total cover lines = ${coverCount}.`,
+        `Cover unreachable rows {${covRowList}} and reachable columns {${covColList}}. ` +
+        `Total cover lines = ${coverCount} = |M|. ` +
+        `This corresponds to the min-cut in the flow network separating S from T.`,
     });
 
     // Step 4: Find theta

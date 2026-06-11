@@ -79,7 +79,7 @@ export default function FlowNetwork({ step }: Props) {
       ? 'Mark unassigned rows (reachable from S)'
       : 'Propagate along alternating paths';
   } else if (rule === 'cover') {
-    subtitle = 'Min vertex cover = max matching';
+    subtitle = 'Min-cut: cover unreachable rows, reachable cols';
   }
 
   function rFill(i: number) { return covR(i) ? C.amber : reachR(i) ? C.purple : C.txt; }
@@ -123,9 +123,9 @@ export default function FlowNetwork({ step }: Props) {
         return (
           <line key={`z${i}-${j}`} {...cl}
             stroke={on ? C.purpleBright : C.edge}
-            strokeWidth={on ? 0.8 : 0.5}
-            opacity={on ? 0.3 : 0.06}
-            strokeDasharray="3,3" />
+            strokeWidth={on ? 1 : 0.75}
+            opacity={on ? 0.45 : 0.18}
+            strokeDasharray="4,3" />
         );
       })}
 
