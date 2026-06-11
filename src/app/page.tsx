@@ -183,7 +183,7 @@ export default function HomePage() {
                 Built by <span className="text-slate-200 font-medium">Michael Wang</span>, a TA for <span className="text-slate-200 font-medium">FIT3155 Advanced Data Structures and Algorithms</span> at Monash University.
               </p>
               <p>
-                I first built an <a href="https://lpm-algo-visual.vercel.app" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors">earlier version</a> while studying the unit in Semester 2, 2025. When I started teaching in 2026, I added a Ukkonen's suffix tree visualizer that received great feedback from students, which motivated me to keep improving it into what you see today.
+                I first built an <a href="https://lpm-algo-visual.vercel.app" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors">earlier version</a> while studying the unit in Semester 2, 2025. When I started teaching in 2026, I made a Ukkonen's suffix tree visualizer (because I made a mistake running Ukkonen's by hand in class and it was embarrassing) that received great feedback from students, which motivated me to keep improving it into what you see today.
               </p>
               <p>
                 The goal is to make string algorithms intuitive by letting you step through each one interactively, watching internal state change at every stage.
