@@ -1,0 +1,131 @@
+'use client';
+
+import React from 'react';
+import { SimplexStep, SimplexStepRule } from '@/lib/simplex-types';
+
+interface Props {
+  currentIndex: number;
+  totalSteps: number;
+  step: SimplexStep;
+  onPrev: () => void;
+  onNext: () => void;
+  onPrevIter: () => void;
+  onNextIter: () => void;
+  onReset: () => void;
+  onGoToEnd: () => void;
+  isPlaying: boolean;
+  onTogglePlay: () => void;
+  speed: number;
+  onSpeedChange: (speed: number) => void;
+}
+
+function RuleBadge({ rule }: { rule: SimplexStepRule }) {
+  const map: Record<SimplexStepRule, { label: string; color: string }> = {
+    init: { label: 'Initialization', color: 'bg-slate-500/20 text-slate-300 ring-slate-500/30' },
+    check_optimal: { label: 'Optimality Check', color: 'bg-amber-500/20 text-amber-300 ring-amber-500/30' },
+    select_pivot_col: { label: 'Entering Variable', color: 'bg-cyan-500/20 text-cyan-300 ring-cyan-500/30' },
+    ratio_test: { label: 'Ratio Test', color: 'bg-indigo-500/20 text-indigo-300 ring-indigo-500/30' },
+    pivot: { label: 'Pivot', color: 'bg-cyan-500/20 text-cyan-300 ring-cyan-500/30' },
+    optimal: { label: 'Optimal', color: 'bg-emerald-500/20 text-emerald-300 ring-emerald-500/30' },
+    unbounded: { label: 'Unbounded', color: 'bg-red-500/20 text-red-300 ring-red-500/30' },
+  };
+  const info = map[rule] || { label: rule, color: 'bg-slate-700 text-slate-300' };
+  return (
+    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ring-1 ${info.color}`}>
+      {info.label}
+    </span>
+  );
+}
+
+export default function SimplexStepControls({
+  currentIndex, totalSteps, step,
+  onPrev, onNext, onPrevIter, onNextIter,
+  onReset, onGoToEnd, isPlaying, onTogglePlay,
+  speed, onSpeedChange,
+}: Props) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="bg-slate-800 rounded-lg px-3 py-1.5">
+          <span className="text-xs text-slate-500">Iteration </span>
+          <span className="text-sm font-bold text-cyan-400">{step.iteration || '—'}</span>
+        </div>
+        <div className="bg-slate-800 rounded-lg px-3 py-1.5">
+          <span className="text-xs text-slate-500">z = </span>
+          <span className="text-sm font-bold text-emerald-400">{fmtDisplay(step.objectiveValue)}</span>
+        </div>
+        <RuleBadge rule={step.rule} />
+      </div>
+
+      <div className="flex items-center gap-2 flex-wrap">
+        <button onClick={onReset} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors">
+          Reset
+        </button>
+        <button onClick={onPrevIter} disabled={currentIndex === 0} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs font-medium transition-colors">
+          Prev Iter
+        </button>
+        <button onClick={onPrev} disabled={currentIndex === 0} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs font-medium transition-colors">
+          Prev
+        </button>
+        <button onClick={onTogglePlay} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-colors ${isPlaying ? 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'}`}>
+          {isPlaying ? 'Pause' : 'Play'}
+        </button>
+        <button onClick={onNext} disabled={currentIndex >= totalSteps - 1} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs font-medium transition-colors">
+          Next
+        </button>
+        <button onClick={onNextIter} disabled={currentIndex >= totalSteps - 1} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs font-medium transition-colors">
+          Next Iter
+        </button>
+        <button onClick={onGoToEnd} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors">
+          End
+        </button>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-slate-500">Speed</span>
+          {([{ label: 'Slow', ms: 2000 }, { label: 'Normal', ms: 1000 }, { label: 'Fast', ms: 400 }] as const).map((preset) => (
+            <button
+              key={preset.label}
+              onClick={() => onSpeedChange(preset.ms)}
+              className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${speed === preset.ms ? 'bg-amber-500/25 text-amber-300 ring-1 ring-amber-500/40' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-300'}`}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500">Step {currentIndex + 1} / {totalSteps}</span>
+            <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full bg-cyan-500/60 rounded-full transition-all duration-300" style={{ width: `${((currentIndex + 1) / totalSteps) * 100}%` }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function gcd(a: number, b: number): number {
+  a = Math.abs(a); b = Math.abs(b);
+  while (b) { [a, b] = [b, a % b]; }
+  return a;
+}
+
+function fmtDisplay(n: number): string {
+  if (Math.abs(n) < 1e-10) return '0';
+  if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+  const sign = n < 0 ? '-' : '';
+  const abs = Math.abs(n);
+  for (let d = 2; d <= 100; d++) {
+    const num = Math.round(abs * d);
+    if (Math.abs(abs - num / d) < 1e-9) {
+      const g = gcd(num, d);
+      return `${sign}${num / g}/${d / g}`;
+    }
+  }
+  const r = Math.round(n * 100) / 100;
+  if (Math.abs(r - Math.round(r)) < 0.001) return Math.round(r).toString();
+  return r.toFixed(2);
+}

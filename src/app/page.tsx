@@ -62,6 +62,20 @@ const ALGORITHMS = [
     },
   },
   {
+    name: 'LP — Simplex Method',
+    path: '/simplex',
+    accent: {
+      border: 'border-cyan-500/30',
+      hoverBorder: 'hover:border-cyan-400/60',
+      bg: 'bg-cyan-500/5',
+      hoverBg: 'hover:bg-cyan-500/10',
+      dot: 'bg-cyan-400',
+      glow: 'hover:shadow-cyan-500/10',
+      title: 'text-cyan-300',
+      arrow: 'text-cyan-400',
+    },
+  },
+  {
     name: 'Hungarian Algorithm',
     path: '/hungarian',
     accent: {
@@ -200,7 +214,7 @@ export default function HomePage() {
                 I first built an <a href="https://lpm-algo-visual.vercel.app" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors">earlier version</a> while studying the unit in Semester 2, 2025. When I started teaching in 2026, I made a Ukkonen's suffix tree visualizer (because I made a mistake running Ukkonen's by hand in class and it was embarrassing) that received great feedback from students, which motivated me to keep improving it into what you see today.
               </p>
               <p>
-                The goal is to make string algorithms intuitive by letting you step through each one interactively, watching internal state change at every stage.
+                The goal is to make these algorithms intuitive by letting you step through each one interactively, watching internal state change at every stage.
               </p>
             </div>
 

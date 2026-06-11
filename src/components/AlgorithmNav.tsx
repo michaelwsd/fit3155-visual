@@ -60,6 +60,17 @@ const ALGORITHMS = [
     },
   },
   {
+    id: 'simplex',
+    name: 'LP — Simplex Method',
+    path: '/simplex',
+    accentClasses: {
+      dot: 'bg-cyan-400',
+      activeBg: 'bg-cyan-500/15',
+      activeText: 'text-cyan-300',
+      activeRing: 'ring-cyan-500/30',
+    },
+  },
+  {
     id: 'hungarian',
     name: 'Hungarian Algorithm',
     path: '/hungarian',
