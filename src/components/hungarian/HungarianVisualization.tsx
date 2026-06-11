@@ -2,13 +2,16 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { HungarianStep } from '@/lib/hungarian-types';
+import FlowNetwork from './FlowNetwork';
 
 interface Props {
   step: HungarianStep;
 }
 
 export default function HungarianVisualization({ step }: Props) {
-  const { matrix, u, v, n, cellStatus, coveredRows, coveredCols, highlightCells, highlightRow, highlightCol, markedRows, markedCols } = step;
+  const { matrix, u, v, n, cellStatus, coveredRows, coveredCols, highlightCells, highlightRow, highlightCol, markedRows, markedCols, rule } = step;
+
+  const showFlowNetwork = rule === 'mark' || rule === 'cover';
 
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -41,11 +44,13 @@ export default function HungarianVisualization({ step }: Props) {
   useEffect(() => {
     requestAnimationFrame(fitToView);
     const container = containerRef.current;
+    const content = contentRef.current;
     if (!container) return;
     const observer = new ResizeObserver(() => fitToView());
     observer.observe(container);
+    if (content) observer.observe(content);
     return () => observer.disconnect();
-  }, [fitToView, n]);
+  }, [fitToView, n, showFlowNetwork]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button === 0) {
@@ -153,85 +158,88 @@ export default function HungarianVisualization({ step }: Props) {
       >
         <div
           ref={contentRef}
-          className="inline-flex flex-col items-center gap-1 origin-top-left"
+          className="inline-flex items-center gap-8 origin-top-left"
           style={{ transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`, transition: isPanning ? 'none' : 'transform 0.3s ease' }}
         >
-          {/* Column headers: v values */}
-          <div className="flex items-end gap-px">
-            <div className={`${dualSize} mr-1 invisible`} />
-            {v.map((val, j) => (
-              <div
-                key={j}
-                className={`${dualSize} flex flex-col items-center justify-end font-mono font-bold rounded-t transition-all duration-300 ${
-                  highlightCol === j ? 'text-indigo-300 bg-indigo-500/15' : coveredCols[j] ? 'text-amber-400' : 'text-indigo-400/80'
-                }`}
-              >
-                <span className="text-[8px] text-slate-500 font-normal">v{j + 1}</span>
-                <span>{val}</span>
-              </div>
-            ))}
-            <div className="w-6" />
-          </div>
-
-          {/* Matrix rows */}
-          {matrix.map((row, i) => (
-            <div key={i} className="flex items-center gap-px">
-              <div
-                className={`${dualSize} flex flex-col items-center justify-center font-mono font-bold rounded-l mr-1 transition-all duration-300 ${
-                  highlightRow === i ? 'text-cyan-300 bg-cyan-500/15' : coveredRows[i] ? 'text-amber-400' : 'text-cyan-400/80'
-                }`}
-              >
-                <span className="text-[8px] text-slate-500 font-normal">u{i + 1}</span>
-                <span>{u[i]}</span>
-              </div>
-
-              {row.map((val, j) => {
-                const status = cellStatus[i]?.[j] ?? 'normal';
-                return (
-                  <div
-                    key={j}
-                    className={`${cellSize} flex items-center justify-center font-mono font-semibold rounded ring-1 ring-inset transition-all duration-300 ${cellBg(i, j)} ${cellText(i, j)}`}
-                  >
-                    {status === 'crossed' ? (
-                      <span className="line-through decoration-slate-500">{val}</span>
-                    ) : (
-                      val
-                    )}
-                  </div>
-                );
-              })}
-
-              <div className={`w-6 ${cellHeight} flex items-center justify-center`}>
-                {markedRows[i] && (
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
-                    <path d="M2 8.5l4 4 8-8" />
-                  </svg>
-                )}
-                {coveredRows[i] && !markedRows.some(Boolean) && (
-                  <div className="w-2 h-7 rounded-full bg-amber-500/60" />
-                )}
-              </div>
+          <div className="inline-flex flex-col items-center gap-1">
+            {/* Column headers: v values */}
+            <div className="flex items-end gap-px">
+              <div className={`${dualSize} mr-1 invisible`} />
+              {v.map((val, j) => (
+                <div
+                  key={j}
+                  className={`${dualSize} flex flex-col items-center justify-end font-mono font-bold rounded-t transition-all duration-300 ${
+                    highlightCol === j ? 'text-indigo-300 bg-indigo-500/15' : coveredCols[j] ? 'text-amber-400' : 'text-indigo-400/80'
+                  }`}
+                >
+                  <span className="text-[8px] text-slate-500 font-normal">v{j + 1}</span>
+                  <span>{val}</span>
+                </div>
+              ))}
+              <div className="w-6" />
             </div>
-          ))}
 
-          {/* Column mark / cover indicators */}
-          <div className="flex gap-px">
-            <div className={`${dualSize} mr-1 invisible`} />
-            {Array.from({ length: n }, (_, j) => (
-              <div key={j} className={`${n <= 3 ? 'w-14' : n <= 5 ? 'w-11' : 'w-9'} h-6 flex items-center justify-center`}>
-                {markedCols[j] && (
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
-                    <path d="M2 8.5l4 4 8-8" />
-                  </svg>
-                )}
-                {coveredCols[j] && !markedCols.some(Boolean) && (
-                  <div className="h-2 w-7 rounded-full bg-amber-500/60" />
-                )}
+            {/* Matrix rows */}
+            {matrix.map((row, i) => (
+              <div key={i} className="flex items-center gap-px">
+                <div
+                  className={`${dualSize} flex flex-col items-center justify-center font-mono font-bold rounded-l mr-1 transition-all duration-300 ${
+                    highlightRow === i ? 'text-cyan-300 bg-cyan-500/15' : coveredRows[i] ? 'text-amber-400' : 'text-cyan-400/80'
+                  }`}
+                >
+                  <span className="text-[8px] text-slate-500 font-normal">u{i + 1}</span>
+                  <span>{u[i]}</span>
+                </div>
+
+                {row.map((val, j) => {
+                  const status = cellStatus[i]?.[j] ?? 'normal';
+                  return (
+                    <div
+                      key={j}
+                      className={`${cellSize} flex items-center justify-center font-mono font-semibold rounded ring-1 ring-inset transition-all duration-300 ${cellBg(i, j)} ${cellText(i, j)}`}
+                    >
+                      {status === 'crossed' ? (
+                        <span className="line-through decoration-slate-500">{val}</span>
+                      ) : (
+                        val
+                      )}
+                    </div>
+                  );
+                })}
+
+                <div className={`w-6 ${cellHeight} flex items-center justify-center`}>
+                  {markedRows[i] && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+                      <path d="M2 8.5l4 4 8-8" />
+                    </svg>
+                  )}
+                  {coveredRows[i] && !markedRows.some(Boolean) && (
+                    <div className="w-2 h-7 rounded-full bg-amber-500/60" />
+                  )}
+                </div>
               </div>
             ))}
-            <div className="w-6" />
+
+            {/* Column mark / cover indicators */}
+            <div className="flex gap-px">
+              <div className={`${dualSize} mr-1 invisible`} />
+              {Array.from({ length: n }, (_, j) => (
+                <div key={j} className={`${n <= 3 ? 'w-14' : n <= 5 ? 'w-11' : 'w-9'} h-6 flex items-center justify-center`}>
+                  {markedCols[j] && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+                      <path d="M2 8.5l4 4 8-8" />
+                    </svg>
+                  )}
+                  {coveredCols[j] && !markedCols.some(Boolean) && (
+                    <div className="h-2 w-7 rounded-full bg-amber-500/60" />
+                  )}
+                </div>
+              ))}
+              <div className="w-6" />
+            </div>
           </div>
 
+          {showFlowNetwork && <FlowNetwork step={step} />}
         </div>
       </div>
 
