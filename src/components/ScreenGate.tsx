@@ -44,6 +44,7 @@ export default function ScreenGate({ children }: { children: React.ReactNode }) 
             { name: 'Boyer-Moore', path: '/boyer-moore', color: 'bg-blue-400' },
             { name: 'Burrows-Wheeler Transform', path: '/bwt', color: 'bg-purple-400' },
             { name: "Ukkonen's Suffix Tree", path: '/ukkonen', color: 'bg-amber-400' },
+            { name: 'Hungarian Algorithm', path: '/hungarian', color: 'bg-rose-400' },
           ].map((algo) => (
             <a
               key={algo.path}
