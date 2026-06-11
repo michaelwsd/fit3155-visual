@@ -2,7 +2,7 @@ import { ZAlgorithmStep } from './z-algorithm-types';
 
 export function buildZAlgorithmSteps(pattern: string, text: string): ZAlgorithmStep[] {
   const steps: ZAlgorithmStep[] = [];
-  const combined = pattern + '$' + text;
+  const combined = pattern.length > 0 ? pattern + '$' + text : text;
   const n = combined.length;
   const patLen = pattern.length;
   const zArray: number[] = new Array(n).fill(0);
@@ -32,9 +32,12 @@ export function buildZAlgorithmSteps(pattern: string, text: string): ZAlgorithmS
   }
 
   snap(0, 'init',
-    `Combined string: "${pattern}" + "$" + "${text}" = "${combined}" (length ${n}). ` +
-    `The Z-array stores, for each position k, the length of the longest substring starting at k ` +
-    `that matches a prefix of the combined string. Z[0] is 0 by convention.`
+    pattern.length > 0
+      ? `Combined string: "${pattern}" + "$" + "${text}" = "${combined}" (length ${n}). ` +
+        `The Z-array stores, for each position k, the length of the longest substring starting at k ` +
+        `that matches a prefix of the combined string. Z[0] is 0 by convention.`
+      : `Running Z-algorithm on text "${text}" (length ${n}). No pattern — computing Z-array directly. ` +
+        `Z[k] = length of the longest substring starting at k that matches a prefix of the string. Z[0] is 0 by convention.`
   );
 
   for (let k = 1; k < n; k++) {
@@ -99,7 +102,7 @@ export function buildZAlgorithmSteps(pattern: string, text: string): ZAlgorithmS
       }
     }
 
-    if (zArray[k] === patLen && k >= patLen + 1) {
+    if (patLen > 0 && zArray[k] === patLen && k >= patLen + 1) {
       const textPos = k - patLen - 1;
       matchPositions.push(textPos);
 
@@ -112,11 +115,13 @@ export function buildZAlgorithmSteps(pattern: string, text: string): ZAlgorithmS
   }
 
   snap(n - 1, 'complete',
-    matchPositions.length > 0
-      ? `Algorithm complete. Pattern "${pattern}" found at ${matchPositions.length} ` +
-        `position${matchPositions.length !== 1 ? 's' : ''} in the text: ` +
-        `[${matchPositions.join(', ')}].`
-      : `Algorithm complete. Pattern "${pattern}" was not found in the text "${text}".`
+    patLen === 0
+      ? `Algorithm complete. Z-array computed for "${text}".`
+      : matchPositions.length > 0
+        ? `Algorithm complete. Pattern "${pattern}" found at ${matchPositions.length} ` +
+          `position${matchPositions.length !== 1 ? 's' : ''} in the text: ` +
+          `[${matchPositions.join(', ')}].`
+        : `Algorithm complete. Pattern "${pattern}" was not found in the text "${text}".`
   );
 
   return steps;

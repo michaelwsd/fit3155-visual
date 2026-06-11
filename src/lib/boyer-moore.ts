@@ -101,12 +101,13 @@ export function buildBMSteps(pattern: string, text: string): BMStep[] {
       explanation: 'Pattern or text is empty. No matches possible.',
       matchPositions: [], matchedIndices: [], mismatchIndex: -1,
       bcShift: 0, gsShift: 0, appliedShift: 0,
-      badCharTable: [], goodSuffix: [], matchedPrefix: [], uniqueChars: [],
+      badCharTable: [], zSuffix: [], goodSuffix: [], matchedPrefix: [], uniqueChars: [],
     });
     return steps;
   }
 
   const { table: bcTable, chars: uniqueChars } = preprocessBadChar(pattern);
+  const zSuffix = reverseZArray(pattern);
   const gs = preprocessGoodSuffix(pattern);
   const mp = preprocessMatchedPrefix(pattern);
 
@@ -135,6 +136,7 @@ export function buildBMSteps(pattern: string, text: string): BMStep[] {
       mismatchIndex: -1,
       bcShift: 0, gsShift: 0, appliedShift: 0,
       badCharTable: bcTable,
+      zSuffix,
       goodSuffix: gs,
       matchedPrefix: mp,
       uniqueChars,

@@ -82,7 +82,7 @@ function ArrayDisplay({
 export default function BMVariablePanel({ step, prevStep }: Props) {
   const p = prevStep;
   const isActive = step.rule !== 'init' && step.rule !== 'complete';
-  const { badCharTable, goodSuffix, matchedPrefix, uniqueChars, patPos, mismatchIndex } = step;
+  const { badCharTable, zSuffix, goodSuffix, matchedPrefix, uniqueChars, patPos, mismatchIndex } = step;
 
   const gsHighlight = mismatchIndex >= 0 ? mismatchIndex + 1 : -1;
   const mpHighlight = mismatchIndex >= 0 ? mismatchIndex + 1 : -1;
@@ -178,6 +178,15 @@ export default function BMVariablePanel({ step, prevStep }: Props) {
             </table>
           </div>
         </div>
+      )}
+
+      {/* Z-Suffix Array */}
+      {zSuffix.length > 0 && (
+        <ArrayDisplay
+          label="Z-Suffix (Zs)"
+          values={zSuffix}
+          highlightIdx={-1}
+        />
       )}
 
       {/* Good Suffix Array */}

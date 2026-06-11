@@ -158,11 +158,10 @@ export default function BoyerMoorePage() {
         <div className="max-w-400 mx-auto flex items-center justify-between gap-4 flex-wrap">
           <div className="ml-12">
             <h1 className="text-lg font-bold text-slate-100">
-              Boyer-Moore — Step-by-Step Visualizer
+              Boyer-Moore
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Arrow keys to navigate, Space to play/pause{' '}
-              <span className="text-slate-400 ml-2">Built by Michael Wang</span>
+              Arrow keys to navigate, Space to play/pause
             </p>
           </div>
           <div className="flex items-center gap-2">

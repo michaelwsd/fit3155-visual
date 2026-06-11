@@ -6,9 +6,9 @@ export async function POST(request: NextRequest) {
   const pattern = typeof body.pattern === 'string' ? body.pattern.slice(0, 20) : '';
   const text = typeof body.text === 'string' ? body.text.slice(0, 30) : '';
 
-  if (pattern.length === 0 || text.length === 0) {
+  if (text.length === 0) {
     return NextResponse.json(
-      { error: 'Both pattern and text are required' },
+      { error: 'Text is required' },
       { status: 400 },
     );
   }

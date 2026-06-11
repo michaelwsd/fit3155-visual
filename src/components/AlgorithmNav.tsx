@@ -63,9 +63,12 @@ const ALGORITHMS = [
 
 export default function AlgorithmNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -85,7 +88,7 @@ export default function AlgorithmNav() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  if (pathname === '/') return null;
+  if (!mounted || pathname === '/') return null;
 
   return (
     <div ref={ref} className="hidden md:block fixed top-4 left-4 z-50">
@@ -126,7 +129,7 @@ export default function AlgorithmNav() {
       {/* Dropdown Panel */}
       <div
         className={`
-          absolute top-12 left-0 w-56
+          absolute top-12 left-0 w-64
           bg-slate-800/95 backdrop-blur-md
           border border-slate-700/50
           rounded-xl shadow-2xl shadow-black/40

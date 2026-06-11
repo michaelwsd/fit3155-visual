@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import AlgorithmNav from "@/components/AlgorithmNav";
 import ScreenGate from "@/components/ScreenGate";
@@ -35,7 +34,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <Script id="theme-init" strategy="beforeInteractive">{themeScript}</Script>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>

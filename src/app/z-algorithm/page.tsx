@@ -121,7 +121,7 @@ export default function ZAlgorithmPage() {
   const handleSubmit = () => {
     const p = inputPattern.trim();
     const t = inputText.trim();
-    if (p.length > 0 && t.length > 0) {
+    if (t.length > 0) {
       setPattern(p);
       setText(t);
       setStepIndex(0);
@@ -182,11 +182,10 @@ export default function ZAlgorithmPage() {
         <div className="max-w-400 mx-auto flex items-center justify-between gap-4 flex-wrap">
           <div className="ml-12">
             <h1 className="text-lg font-bold text-slate-100">
-              Z Algorithm — Step-by-Step Visualizer
+              Z Algorithm
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Arrow keys to navigate, Space to play/pause{' '}
-              <span className="text-slate-400 ml-2">Built by Michael Wang</span>
+              Arrow keys to navigate, Space to play/pause
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -199,15 +198,29 @@ export default function ZAlgorithmPage() {
               className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-mono text-slate-200 w-28 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 placeholder:text-slate-600"
               maxLength={20}
             />
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              placeholder="Text"
-              className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-mono text-slate-200 w-40 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 placeholder:text-slate-600"
-              maxLength={30}
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                placeholder="Text"
+                className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 pr-8 text-sm font-mono text-slate-200 w-40 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 placeholder:text-slate-600"
+                maxLength={30}
+              />
+              <button
+                onClick={() => setInputText((t) => t.split('').reverse().join(''))}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded text-slate-500 hover:text-emerald-400 hover:bg-slate-700/60 transition-colors"
+                aria-label="Reverse text"
+                title="Reverse text"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 16l-4-4 4-4" />
+                  <path d="M17 8l4 4-4 4" />
+                  <path d="M3 12h18" />
+                </svg>
+              </button>
+            </div>
             <button
               onClick={handleSubmit}
               className="px-4 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 text-sm font-bold transition-colors"

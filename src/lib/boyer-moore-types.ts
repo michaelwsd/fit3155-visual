@@ -21,6 +21,7 @@ export interface BMStep {
   gsShift: number;
   appliedShift: number;
   badCharTable: number[][];
+  zSuffix: number[];
   goodSuffix: number[];
   matchedPrefix: number[];
   uniqueChars: string[];
