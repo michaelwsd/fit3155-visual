@@ -61,7 +61,7 @@ const ALGORITHMS = [
   },
   {
     id: 'simplex',
-    name: 'LP — Simplex Method',
+    name: 'Linear Programming',
     path: '/simplex',
     accentClasses: {
       dot: 'bg-cyan-400',
