@@ -70,24 +70,24 @@ export default function SimplexCalculations({ step }: Props) {
             return (
               <div key={j} className="font-mono text-xs px-2 py-0.5 rounded hover:bg-slate-800/40 transition-colors">
                 <span className={`${j < numVars ? 'text-cyan-400' : 'text-indigo-400'} font-semibold`}>{varNames[j]}</span>
-                <span className="text-slate-600">{': '}</span>
+                <span className="text-slate-300">{': '}</span>
                 {cB.map((cb, i) => (
                   <React.Fragment key={i}>
-                    {i > 0 && <span className="text-slate-600">{cb >= 0 ? ' + ' : ' − '}</span>}
-                    {i === 0 && cb < 0 && <span className="text-slate-600">{'−'}</span>}
+                    {i > 0 && <span className="text-slate-300">{cb >= 0 ? ' + ' : ' − '}</span>}
+                    {i === 0 && cb < 0 && <span className="text-slate-300">{'−'}</span>}
                     <span className="text-slate-400">{i === 0 ? fmt(cb) : fmt(Math.abs(cb))}</span>
-                    <span className="text-slate-600">{'('}</span>
+                    <span className="text-slate-300">{'('}</span>
                     <span className="text-slate-200">{fmt(colValues[i])}</span>
-                    <span className="text-slate-600">{')'}</span>
+                    <span className="text-slate-300">{')'}</span>
                   </React.Fragment>
                 ))}
                 {Math.abs(cj[j]) > 1e-10 && (
                   <>
-                    <span className="text-slate-600">{cj[j] > 0 ? ' − ' : ' + '}</span>
+                    <span className="text-slate-300">{cj[j] > 0 ? ' − ' : ' + '}</span>
                     <span className="text-slate-400">{fmt(Math.abs(cj[j]))}</span>
                   </>
                 )}
-                <span className="text-slate-600">{' = '}</span>
+                <span className="text-slate-300">{' = '}</span>
                 <span className={`font-semibold ${result < -1e-10 ? 'text-red-300' : 'text-slate-200'}`}>{fmt(result)}</span>
               </div>
             );
@@ -100,18 +100,18 @@ export default function SimplexCalculations({ step }: Props) {
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Objective Value</h3>
         <div className="font-mono text-xs px-2">
           <span className="text-emerald-400">z</span>
-          <span className="text-slate-600">{': '}</span>
+          <span className="text-slate-300">{': '}</span>
           {cB.map((cb, i) => (
             <React.Fragment key={i}>
-              {i > 0 && <span className="text-slate-600">{cb >= 0 ? ' + ' : ' − '}</span>}
-              {i === 0 && cb < 0 && <span className="text-slate-600">{'−'}</span>}
+              {i > 0 && <span className="text-slate-300">{cb >= 0 ? ' + ' : ' − '}</span>}
+              {i === 0 && cb < 0 && <span className="text-slate-300">{'−'}</span>}
               <span className="text-slate-400">{i === 0 ? fmt(cb) : fmt(Math.abs(cb))}</span>
-              <span className="text-slate-600">{'('}</span>
+              <span className="text-slate-300">{'('}</span>
               <span className="text-slate-200">{fmt(tableau[i][totalVars])}</span>
-              <span className="text-slate-600">{')'}</span>
+              <span className="text-slate-300">{')'}</span>
             </React.Fragment>
           ))}
-          <span className="text-slate-600">{' = '}</span>
+          <span className="text-slate-300">{' = '}</span>
           <span className="text-emerald-300 font-bold">{fmt(zj[totalVars])}</span>
         </div>
       </div>
@@ -125,9 +125,9 @@ function RowOp({ op }: { op: PivotOperation }) {
     return (
       <>
         <span className={labelColor}>{op.rowLabel}</span>
-        <span className="text-slate-500">{' ← '}</span>
+        <span className="text-slate-300">{' ← '}</span>
         <span className={labelColor}>{op.rowLabel}</span>
-        <span className="text-slate-500">{' ÷ '}</span>
+        <span className="text-slate-300">{' / '}</span>
         <span className="text-slate-200">{fmt(op.value)}</span>
       </>
     );
@@ -138,13 +138,13 @@ function RowOp({ op }: { op: PivotOperation }) {
   return (
     <>
       <span className={labelColor}>{op.rowLabel}</span>
-      <span className="text-slate-500">{' ← '}</span>
+      <span className="text-slate-300">{' ← '}</span>
       <span className={labelColor}>{op.rowLabel}</span>
-      <span className="text-slate-500">{` ${sign} `}</span>
+      <span className="text-slate-300">{` ${sign} `}</span>
       {!isOne && (
         <>
           <span className="text-slate-200">{fmt(absFactor)}</span>
-          <span className="text-slate-500">{'·'}</span>
+          <span className="text-slate-300">{'·'}</span>
         </>
       )}
       <span className="text-cyan-300">{op.pivotRowLabel}</span>
