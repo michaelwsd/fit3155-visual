@@ -1,6 +1,6 @@
 # FIT3155 Algorithm Visualizer
 
-Interactive web-based visualizer for string algorithms covered in FIT3155. Built for students — step through each algorithm, watch the state evolve, and see how key variables change in real time.
+Interactive web-based visualizer for algorithms covered in FIT3155. Built for students — step through each algorithm, watch the state evolve, and see how key variables change in real time.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
@@ -19,6 +19,12 @@ BWT construction, inverse BWT, and pattern search using the last-to-first mappin
 
 ### Ukkonen's Suffix Tree
 Online suffix tree construction. Walk through every phase and extension, see the tree grow as an SVG with suffix links, and watch the active point, rules, and internal node creation in real time. Includes DFS traversal and suffix array extraction from the completed tree.
+
+### Hungarian Algorithm
+Optimal assignment for cost matrices. Visualizes row/column reduction, line covering, and augmenting path adjustments step by step, with a bipartite flow network graph showing the current matching.
+
+### Simplex Method (Linear Programming)
+Tableau-based LP solver. Watch the simplex algorithm pivot through basic feasible solutions, with educational annotations showing c_j/c_B coefficients, row operations, z-row derivations (dot product breakdowns), and objective value computation at each iteration. Supports custom objective functions and constraints.
 
 ## Features
 
@@ -59,11 +65,15 @@ visualizer/
 │   │   ├── boyer-moore/page.tsx      # Boyer-Moore visualizer
 │   │   ├── bwt/page.tsx              # Burrows-Wheeler visualizer
 │   │   ├── ukkonen/page.tsx          # Ukkonen's suffix tree visualizer
+│   │   ├── hungarian/page.tsx        # Hungarian Algorithm visualizer
+│   │   ├── simplex/page.tsx          # Simplex Method visualizer
 │   │   └── api/
 │   │       ├── z-algorithm/route.ts  # Z Algorithm step computation
 │   │       ├── boyer-moore/route.ts  # Boyer-Moore step computation
 │   │       ├── bwt/route.ts          # BWT step computation
-│   │       └── build-steps/route.ts  # Ukkonen step computation
+│   │       ├── build-steps/route.ts  # Ukkonen step computation
+│   │       ├── hungarian/route.ts    # Hungarian step computation
+│   │       └── simplex/route.ts      # Simplex step computation
 │   ├── components/
 │   │   ├── AlgorithmNav.tsx           # Algorithm switcher dropdown
 │   │   ├── ScreenGate.tsx             # Minimum screen size gate
@@ -74,17 +84,23 @@ visualizer/
 │   │   ├── StringDisplay.tsx          # String with phase/suffix highlighting
 │   │   ├── z-algorithm/              # Z Algorithm components
 │   │   ├── boyer-moore/              # Boyer-Moore components
-│   │   └── bwt/                      # BWT components
+│   │   ├── bwt/                      # BWT components
+│   │   ├── hungarian/                # Hungarian Algorithm components
+│   │   └── simplex/                  # Simplex Method components
 │   └── lib/
 │       ├── ukkonen.ts                # Ukkonen algorithm + step snapshots
 │       ├── z-algorithm.ts            # Z Algorithm + step snapshots
 │       ├── boyer-moore.ts            # Boyer-Moore + step snapshots
 │       ├── bwt.ts                    # BWT + step snapshots
+│       ├── hungarian.ts              # Hungarian algorithm + step snapshots
+│       ├── simplex.ts                # Simplex method + step snapshots
 │       ├── layout.ts                 # Tree layout computation
 │       ├── types.ts                  # Ukkonen types
 │       ├── z-algorithm-types.ts      # Z Algorithm types
 │       ├── boyer-moore-types.ts      # Boyer-Moore types
-│       └── bwt-types.ts              # BWT types
+│       ├── bwt-types.ts              # BWT types
+│       ├── hungarian-types.ts        # Hungarian types
+│       └── simplex-types.ts          # Simplex types
 ├── scripts/
 │   └── verify.ts                     # Ukkonen correctness tests
 └── package.json
