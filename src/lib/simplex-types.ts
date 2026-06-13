@@ -7,6 +7,13 @@ export type SimplexStepRule =
   | 'optimal'
   | 'unbounded';
 
+export interface PivotOperation {
+  rowLabel: string;
+  type: 'normalize' | 'eliminate';
+  value: number;
+  pivotRowLabel: string;
+}
+
 export interface SimplexStep {
   rule: SimplexStepRule;
   tableau: number[][];
@@ -21,4 +28,6 @@ export interface SimplexStep {
   solution: number[];
   iteration: number;
   explanation: string;
+  pivotOperations: PivotOperation[];
+  zCalcTerms: { varName: string; coeff: number; value: number }[];
 }

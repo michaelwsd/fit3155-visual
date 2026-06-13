@@ -1,4 +1,4 @@
-import { SimplexStep, SimplexStepRule } from './simplex-types';
+import { SimplexStep, SimplexStepRule, PivotOperation } from './simplex-types';
 
 function gcd(a: number, b: number): number {
   a = Math.abs(a); b = Math.abs(b);
@@ -67,8 +67,13 @@ export function buildSimplexSteps(
     return Math.abs(v) < 1e-10 ? 0 : v;
   }
 
-  function make(rule: SimplexStepRule, pivotRow: number, pivotCol: number, ratios: (number | null)[], iteration: number, explanation: string): SimplexStep {
-    return { rule, tableau: snap(), basicVars: [...basicVars], numVars, numConstraints, varNames: [...varNames], pivotRow, pivotCol, ratios, objectiveValue: objVal(), solution: getSolution(), iteration, explanation };
+  function makeZCalcTerms() {
+    const sol = getSolution();
+    return objective.map((c, i) => ({ varName: varNames[i], coeff: c, value: sol[i] }));
+  }
+
+  function make(rule: SimplexStepRule, pivotRow: number, pivotCol: number, ratios: (number | null)[], iteration: number, explanation: string, pivotOps: PivotOperation[] = []): SimplexStep {
+    return { rule, tableau: snap(), basicVars: [...basicVars], numVars, numConstraints, varNames: [...varNames], pivotRow, pivotCol, ratios, objectiveValue: objVal(), solution: getSolution(), iteration, explanation, pivotOperations: pivotOps, zCalcTerms: makeZCalcTerms() };
   }
 
   const slackList = varNames.slice(numVars).join(', ');
@@ -144,6 +149,18 @@ export function buildSimplexSteps(
       `Minimum ratio test for entering variable ${varNames[pivotCol]}. ${ratioDetails}. Minimum ratio = ${fmt(minRatio)} at row ${pivotRow + 1}. Variable ${varNames[basicVars[pivotRow]]} leaves the basis.`));
 
     const pivotElement = tableau[pivotRow][pivotCol];
+    const pivotRowLabel = `R${pivotRow + 1}`;
+    const pivotOps: PivotOperation[] = [
+      { rowLabel: pivotRowLabel, type: 'normalize', value: pivotElement, pivotRowLabel },
+    ];
+    for (let i = 0; i <= numConstraints; i++) {
+      if (i === pivotRow) continue;
+      const factor = tableau[i][pivotCol];
+      if (Math.abs(factor) < 1e-10) continue;
+      const label = i === numConstraints ? 'z' : `R${i + 1}`;
+      pivotOps.push({ rowLabel: label, type: 'eliminate', value: factor, pivotRowLabel });
+    }
+
     for (let j = 0; j <= totalVars; j++) tableau[pivotRow][j] /= pivotElement;
     for (let i = 0; i <= numConstraints; i++) {
       if (i === pivotRow) continue;
@@ -157,7 +174,8 @@ export function buildSimplexSteps(
 
     const newBfs = basicVars.map((v, i) => `${varNames[v]} = ${fmt(tableau[i][totalVars])}`).join(', ');
     steps.push(make('pivot', pivotRow, pivotCol, [], iteration,
-      `Pivot on row ${pivotRow + 1}, column ${varNames[pivotCol]} (element = ${fmt(pivotElement)}). ${oldBasic} leaves, ${varNames[pivotCol]} enters the basis. Updated BFS: ${newBfs}. Objective z = ${fmt(objVal())}.`));
+      `Pivot on row ${pivotRow + 1}, column ${varNames[pivotCol]} (element = ${fmt(pivotElement)}). ${oldBasic} leaves, ${varNames[pivotCol]} enters the basis. Updated BFS: ${newBfs}. Objective z = ${fmt(objVal())}.`,
+      pivotOps));
   }
 
   return steps;

@@ -42,10 +42,7 @@ function Var({ label, value, changed, color = 'text-slate-200' }: { label: strin
 
 export default function SimplexVariablePanel({ step, prevStep }: Props) {
   const p = prevStep;
-  const { numVars, varNames, solution, basicVars, numConstraints } = step;
-
-  const basicSet = new Set(basicVars);
-  const nonBasicVars = varNames.filter((_, i) => !basicSet.has(i));
+  const { numVars, varNames, solution, numConstraints } = step;
 
   return (
     <div className="space-y-5">
@@ -90,27 +87,6 @@ export default function SimplexVariablePanel({ step, prevStep }: Props) {
         </div>
       </div>
 
-      <div>
-        <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Basic Variables</h4>
-        <div className="flex gap-1.5 flex-wrap">
-          {basicVars.map((v, i) => (
-            <span key={i} className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-300 ring-1 ring-cyan-500/30">
-              {varNames[v]}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Non-Basic Variables</h4>
-        <div className="flex gap-1.5 flex-wrap">
-          {nonBasicVars.map((name, i) => (
-            <span key={i} className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-700/50 text-slate-400 ring-1 ring-slate-600/30">
-              {name} = 0
-            </span>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { SimplexStep } from '@/lib/simplex-types';
 import SimplexVisualization from '@/components/simplex/SimplexVisualization';
 import SimplexVariablePanel from '@/components/simplex/SimplexVariablePanel';
+import SimplexCalculations from '@/components/simplex/SimplexCalculations';
 import SimplexStepControls from '@/components/simplex/SimplexStepControls';
 import ProblemInputModal from '@/components/simplex/ProblemInputModal';
 import { useTheme } from '@/components/ThemeProvider';
@@ -206,6 +207,7 @@ export default function SimplexPage() {
         <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col">
           <div className="p-5 flex-1 overflow-y-auto space-y-6">
             <SimplexVariablePanel step={step} prevStep={prevStep} />
+            <SimplexCalculations step={step} />
             <div>
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Explanation</h3>
               <p className="text-sm text-slate-300 leading-relaxed">{step.explanation}</p>

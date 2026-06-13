@@ -31,8 +31,10 @@ function fmt(n: number): string {
 }
 
 export default function SimplexVisualization({ step }: Props) {
-  const { tableau, basicVars, numVars, numConstraints, varNames, pivotRow, pivotCol, ratios, rule } = step;
+  const { tableau, basicVars, numVars, numConstraints, varNames, pivotRow, pivotCol, ratios, rule, zCalcTerms } = step;
   const totalVars = numVars + numConstraints;
+  const cj = Array.from({ length: totalVars }, (_, j) => j < numVars ? zCalcTerms[j].coeff : 0);
+  const cB = basicVars.map(v => cj[v]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -196,9 +198,19 @@ export default function SimplexVisualization({ step }: Props) {
           className="inline-flex flex-col gap-0 origin-top-left"
           style={{ transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`, transition: isPanning ? 'none' : 'transform 0.3s ease' }}
         >
+          {/* c_j row */}
+          <div className="flex items-end gap-px mb-0.5">
+            <div className="w-20" />
+            {varNames.map((_, j) => (
+              <div key={j} className={`${cellW} flex items-center justify-center`}>
+                <span className="font-mono font-bold text-amber-400/70 text-xs">{fmt(cj[j])}</span>
+              </div>
+            ))}
+          </div>
+
           {/* Column headers */}
           <div className="flex items-end gap-px mb-1">
-            <div className={`w-14 ${cellH} flex items-center justify-center`}>
+            <div className={`w-20 ${cellH} flex items-center justify-center`}>
               <span className="text-[10px] font-bold text-slate-500 uppercase">BV</span>
             </div>
             {varNames.map((name, j) => (
@@ -226,11 +238,12 @@ export default function SimplexVisualization({ step }: Props) {
           {/* Constraint rows */}
           {tableau.slice(0, numConstraints).map((row, i) => (
             <div key={i} className="flex items-center gap-px mb-px">
-              <div className={`w-14 ${cellH} flex items-center justify-center font-mono font-bold text-xs transition-all duration-300 rounded-l ${
+              <div className={`w-20 ${cellH} flex items-center justify-center gap-2 font-mono font-bold text-xs transition-all duration-300 rounded-l ${
                 pivotRow === i && (rule === 'ratio_test' || rule === 'pivot')
                   ? 'text-cyan-300 bg-cyan-500/15'
                   : basicVars[i] < numVars ? 'text-cyan-400/80' : 'text-indigo-400/80'
               }`}>
+                <span className="text-amber-400/70">{fmt(cB[i])}</span>
                 {varNames[basicVars[i]]}
               </div>
               {row.slice(0, totalVars).map((val, j) => (
@@ -260,7 +273,7 @@ export default function SimplexVisualization({ step }: Props) {
 
           {/* Separator */}
           <div className="flex items-center gap-px my-1">
-            <div className="w-14 h-px" />
+            <div className="w-20 h-px" />
             {Array.from({ length: totalVars + 1 + (showRatios ? 1 : 0) }, (_, i) => (
               <div key={i} className={`${cellW} h-px bg-slate-600/50`} />
             ))}
@@ -268,7 +281,7 @@ export default function SimplexVisualization({ step }: Props) {
 
           {/* Z-row */}
           <div className="flex items-center gap-px">
-            <div className={`w-14 ${cellH} flex items-center justify-center font-mono font-bold text-xs text-emerald-400/80`}>
+            <div className={`w-20 ${cellH} flex items-center justify-center font-mono font-bold text-xs text-emerald-400/80`}>
               z
             </div>
             {tableau[zRowIdx].slice(0, totalVars).map((val, j) => (
@@ -286,6 +299,7 @@ export default function SimplexVisualization({ step }: Props) {
               <div className={`${cellW} ${cellH}`} />
             )}
           </div>
+
         </div>
       </div>
 
