@@ -3,6 +3,8 @@
 @theme {
   --animate-spin-slow: spin 1s linear infinite;
   --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-out: fade-out 0.2s ease-in both;
+  --animate-fade-out-down: fade-out-down 0.25s ease-in both;
 }
 
 @keyframes fade-in-up {
@@ -13,6 +15,26 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out-down {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
   }
 }
 
