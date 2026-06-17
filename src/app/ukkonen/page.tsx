@@ -225,7 +225,11 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-6">
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-20%] right-[-10%] w-150 h-150 rounded-full bg-amber-500/3 blur-[120px]" />
+          <div className="absolute bottom-[10%] left-[-10%] w-100 h-100 rounded-full bg-amber-500/[0.02] blur-[100px]" />
+        </div>
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none" className="animate-spin-slow">
           <circle cx="24" cy="24" r="20" stroke="#334155" strokeWidth="3" />
           <path
@@ -254,9 +258,14 @@ export default function Home() {
   if (!step) return null;
 
   return (
-    <div className="min-h-screen lg:h-screen bg-slate-950 text-slate-200 flex flex-col overflow-x-hidden overflow-y-auto lg:overflow-hidden">
+    <div className="min-h-screen lg:h-screen bg-slate-950 text-slate-200 flex flex-col overflow-x-hidden overflow-y-auto lg:overflow-hidden relative">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-20%] right-[-10%] w-150 h-150 rounded-full bg-amber-500/3 blur-[120px]" />
+        <div className="absolute bottom-[10%] left-[-10%] w-100 h-100 rounded-full bg-amber-500/[0.02] blur-[100px]" />
+      </div>
+
       {/* Header */}
-      <header className="border-b border-slate-800 px-6 py-4">
+      <header className="border-b border-slate-800/50 bg-slate-900/40 backdrop-blur-md px-6 py-4 relative z-10">
         <div className="max-w-400 mx-auto flex items-center justify-between gap-4 flex-wrap">
           <div className="ml-12">
             <h1 className="text-lg font-bold text-slate-100">
@@ -284,7 +293,7 @@ export default function Home() {
             </button>
             <button
               onClick={toggleTheme}
-              className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-colors"
+              className="w-9 h-9 rounded-lg bg-slate-800/60 hover:bg-slate-700/80 text-slate-400 hover:text-slate-200 flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-slate-700/30"
               aria-label="Toggle theme"
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
@@ -311,11 +320,11 @@ export default function Home() {
       </header>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden relative">
         {/* Left: Tree + controls */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* String display */}
-          <div className="px-6 py-3 border-b border-slate-800/50">
+          <div className="px-6 py-3 border-b border-slate-800/30">
             <StringDisplay step={step} />
           </div>
 
@@ -325,7 +334,7 @@ export default function Home() {
           </div>
 
           {/* Controls */}
-          <div className="px-6 py-4 border-t border-slate-800">
+          <div className="px-6 py-4 border-t border-slate-800/50">
             <StepControls
               currentIndex={stepIndex}
               totalSteps={steps.length}
@@ -351,7 +360,7 @@ export default function Home() {
         </div>
 
         {/* Right: Variable panel + explanation */}
-        <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col">
+        <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-slate-800/50 bg-slate-900/20 flex flex-col">
           <div className="p-5 flex-1 overflow-y-auto space-y-6">
             <VariablePanel step={step} prevStep={prevStep} />
 

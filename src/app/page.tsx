@@ -90,51 +90,32 @@ function AlgoCard({ algo, index }: { algo: typeof ALGORITHMS[number]; index: num
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Hover border glow */}
-        <div
-          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{
-            background: hovered
-              ? `radial-gradient(400px circle at ${pos.x}px ${pos.y}px, ${algo.color}40, transparent 40%)`
-              : undefined,
-          }}
-        />
-
-        {/* Static border */}
-        <div className="absolute inset-0 rounded-2xl border border-slate-800/80 group-hover:border-slate-700/60 transition-colors duration-500 pointer-events-none" />
+        {/* Border */}
+        <div className="absolute inset-0 rounded-2xl border border-slate-800/80 group-hover:border-slate-600/60 transition-colors duration-500 pointer-events-none" />
 
         {/* Card body */}
-        <div className="relative rounded-2xl bg-slate-900/70 backdrop-blur-sm px-6 py-6">
-          {/* Mouse spotlight fill */}
+        <div className="relative rounded-2xl bg-slate-900/70 backdrop-blur-sm px-6 py-4">
+          {/* Mouse spotlight */}
           <div
             className="absolute inset-0 rounded-2xl transition-opacity duration-300 pointer-events-none"
             style={{
               opacity: hovered ? 1 : 0,
-              background: `radial-gradient(300px circle at ${pos.x}px ${pos.y}px, ${algo.color}0a, transparent 60%)`,
+              background: `radial-gradient(300px circle at ${pos.x}px ${pos.y}px, rgba(148,163,184,0.06), transparent 60%)`,
             }}
           />
 
           <div className="relative flex items-center justify-between gap-4">
             <div className="flex items-center gap-3.5 min-w-0">
               <div
-                className="w-2.5 h-2.5 rounded-full shrink-0 transition-all duration-500"
-                style={{
-                  backgroundColor: algo.color,
-                  boxShadow: hovered ? `0 0 10px 3px ${algo.color}50` : `0 0 0 0 transparent`,
-                }}
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: algo.color }}
               />
               <h2 className="text-[15px] font-semibold text-slate-200 group-hover:text-slate-100 transition-colors duration-300 truncate">
                 {algo.name}
               </h2>
             </div>
 
-            <div
-              className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 bg-slate-800/50 group-hover:bg-slate-800/80"
-              style={{
-                color: hovered ? algo.color : undefined,
-                boxShadow: hovered ? `0 0 12px 0 ${algo.color}20` : 'none',
-              }}
-            >
+            <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 bg-slate-800/50 group-hover:bg-slate-800/80">
               <svg
                 width="16"
                 height="16"
@@ -144,7 +125,7 @@ function AlgoCard({ algo, index }: { algo: typeof ALGORITHMS[number]; index: num
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-slate-600 group-hover:text-inherit transition-all duration-300 group-hover:translate-x-0.5"
+                className="text-slate-600 group-hover:text-slate-400 transition-all duration-300 group-hover:translate-x-0.5"
               >
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
@@ -287,30 +268,16 @@ export default function HomePage() {
       </div>
 
       {/* Main content */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-6 py-20">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-6 py-8">
         {/* Header */}
-        <div className="text-center mb-12 animate-fade-in-up">
+        <div className="text-center mb-6 animate-fade-in-up">
           <p className="text-xs font-medium tracking-[0.2em] uppercase text-slate-500 mb-3">FIT3155</p>
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight bg-linear-to-b from-slate-100 to-slate-400 bg-clip-text text-transparent pb-1">
             Algorithm Visualizer
           </h1>
-          <p className="text-sm text-slate-500 mt-4 max-w-sm mx-auto leading-relaxed">
-            Step through algorithms interactively and watch internal state change at every stage
-          </p>
-        </div>
-
-        {/* Card grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
-          {ALGORITHMS.map((algo, i) => (
-            <AlgoCard key={algo.path} algo={algo} index={i} />
-          ))}
-        </div>
-
-        {/* About link */}
-        <div className="mt-10 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
           <button
             onClick={() => setShowAbout(true)}
-            className="group px-5 py-2 rounded-full border border-slate-800/60 bg-slate-900/40 text-xs text-slate-500 cursor-pointer hover:text-slate-300 hover:border-slate-600/60 hover:bg-slate-800/60 transition-all duration-300 backdrop-blur-sm"
+            className="group mt-4 px-5 py-2 rounded-full border border-slate-800/60 bg-slate-900/40 text-xs text-slate-500 cursor-pointer hover:text-slate-300 hover:border-slate-600/60 hover:bg-slate-800/60 transition-all duration-300 backdrop-blur-sm"
           >
             <span className="inline-flex items-center gap-2">
               About this tool
@@ -319,6 +286,13 @@ export default function HomePage() {
               </svg>
             </span>
           </button>
+        </div>
+
+        {/* Card list */}
+        <div className="flex flex-col gap-3 w-full max-w-lg">
+          {ALGORITHMS.map((algo, i) => (
+            <AlgoCard key={algo.path} algo={algo} index={i} />
+          ))}
         </div>
       </div>
 

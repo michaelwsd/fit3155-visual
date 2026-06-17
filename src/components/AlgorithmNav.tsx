@@ -39,7 +39,7 @@ const ALGORITHMS = [
   },
   {
     id: 'bwt',
-    name: 'Burrows-Wheeler',
+    name: 'Burrows-Wheeler Transform',
     path: '/bwt',
     accentClasses: {
       dot: 'bg-purple-400',
