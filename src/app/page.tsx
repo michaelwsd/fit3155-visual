@@ -72,64 +72,70 @@ function AlgoCard({ algo, index }: { algo: typeof ALGORITHMS[number]; index: num
     <Link
       ref={ref}
       href={algo.path}
-      className="group relative rounded-2xl overflow-hidden animate-fade-in-up hover:shadow-2xl"
+      className="group relative rounded-2xl animate-fade-in-up transition-all duration-300"
       style={{
         animationDelay: `${150 + index * 70}ms`,
         perspective: '800px',
+        transform: hovered
+          ? `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`
+          : 'rotateX(0deg) rotateY(0deg)',
+        transformStyle: 'preserve-3d',
       }}
       onMouseMove={onMove}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={onLeave}
     >
+      {/* Glow border that follows cursor */}
       <div
-        className="transition-transform duration-200 ease-out"
+        className="absolute -inset-px rounded-2xl transition-opacity duration-300 pointer-events-none"
         style={{
-          transform: hovered
-            ? `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateZ(4px)`
-            : 'rotateX(0deg) rotateY(0deg) translateZ(0px)',
-          transformStyle: 'preserve-3d',
+          opacity: hovered ? 1 : 0,
+          background: `radial-gradient(200px circle at ${pos.x}px ${pos.y}px, ${algo.color}50, transparent 70%)`,
         }}
-      >
-        {/* Border */}
-        <div className="absolute inset-0 rounded-2xl border border-slate-800/80 group-hover:border-slate-600/60 transition-colors duration-500 pointer-events-none" />
+      />
 
-        {/* Card body */}
-        <div className="relative rounded-2xl bg-slate-900/70 backdrop-blur-sm px-6 py-4">
-          {/* Mouse spotlight */}
+      {/* Card fill */}
+      <div className="relative rounded-2xl bg-slate-900 border border-slate-800/80 group-hover:border-transparent backdrop-blur-sm transition-colors duration-300 overflow-hidden">
+        {/* Inner spotlight */}
+        <div
+          className="absolute inset-0 transition-opacity duration-300 pointer-events-none"
+          style={{
+            opacity: hovered ? 1 : 0,
+            background: `radial-gradient(300px circle at ${pos.x}px ${pos.y}px, ${algo.color}08, transparent 60%)`,
+          }}
+        />
+
+        <div className="relative flex items-center justify-between gap-4 px-6 py-4">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div
+              className="w-2.5 h-2.5 rounded-full shrink-0 transition-shadow duration-300"
+              style={{
+                backgroundColor: algo.color,
+                boxShadow: hovered ? `0 0 8px 2px ${algo.color}40` : 'none',
+              }}
+            />
+            <h2 className="text-[15px] font-semibold text-slate-200 group-hover:text-slate-100 transition-colors duration-300 truncate">
+              {algo.name}
+            </h2>
+          </div>
+
           <div
-            className="absolute inset-0 rounded-2xl transition-opacity duration-300 pointer-events-none"
-            style={{
-              opacity: hovered ? 1 : 0,
-              background: `radial-gradient(300px circle at ${pos.x}px ${pos.y}px, rgba(148,163,184,0.06), transparent 60%)`,
-            }}
-          />
-
-          <div className="relative flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div
-                className="w-2.5 h-2.5 rounded-full shrink-0"
-                style={{ backgroundColor: algo.color }}
-              />
-              <h2 className="text-[15px] font-semibold text-slate-200 group-hover:text-slate-100 transition-colors duration-300 truncate">
-                {algo.name}
-              </h2>
-            </div>
-
-            <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 bg-slate-800/50 group-hover:bg-slate-800/80">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-slate-600 group-hover:text-slate-400 transition-all duration-300 group-hover:translate-x-0.5"
-              >
-                <path d="M3 8h10M9 4l4 4-4 4" />
-              </svg>
-            </div>
+            className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 bg-slate-800/50 group-hover:bg-slate-800/80"
+            style={{ color: hovered ? algo.color : undefined }}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-slate-600 group-hover:text-inherit transition-all duration-300 group-hover:translate-x-0.5"
+            >
+              <path d="M3 8h10M9 4l4 4-4 4" />
+            </svg>
           </div>
         </div>
       </div>
