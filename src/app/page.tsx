@@ -289,7 +289,7 @@ export default function HomePage() {
         </div>
 
         {/* Card list */}
-        <div className="flex flex-col gap-3 w-full max-w-lg">
+        <div className="flex flex-col gap-2 w-full max-w-lg">
           {ALGORITHMS.map((algo, i) => (
             <AlgoCard key={algo.path} algo={algo} index={i} />
           ))}
